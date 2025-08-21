@@ -13,7 +13,7 @@
       </ul>
     </div>
   @endif
-
+{{-- hola --}}
   <form method="POST" action="{{ route('admin.usuarios.update', $usuario) }}" enctype="multipart/form-data" id="form-user">
     @csrf
     @method('PUT')
