@@ -93,4 +93,11 @@ class Empresa extends Model
         return $out . '-' . $dv;
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'empresa_user')
+            ->withPivot('relacion')
+            ->withTimestamps();
+    }
+
 }

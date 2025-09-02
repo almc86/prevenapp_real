@@ -56,7 +56,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // Validación base
+        // 1) Validación base
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
@@ -64,83 +64,78 @@ class UserController extends Controller
             'role_id'  => 'required|exists:roles,id',
         ]);
 
-        // Determinar rol (Spatie)
-        $role      = Role::findById($request->role_id, 'web');
-        $roleName  = $role->name; // 'principal', 'contratista', 'sub contratista', 'prevencionista', 'visualizador'
+        // 2) Determinar rol (Spatie) y normalizar clave de comparación
+        $role     = Role::findById($request->role_id, 'web');
+        $roleName = $role->name;                  // p.ej.: 'principal', 'contratista', 'sub contratista', 'prevencionista', 'visualizador'
+        $rolKey   = strtolower(str_replace(' ', '', trim($roleName))); // 'sub contratista' -> 'subcontratista'
 
-        // Normalizamos nombres de rol para comparar (por si hay espacios o mayúsculas)
-        $rol = strtolower(trim($roleName));
-
-        // Validaciones condicionales
-        if (in_array($rol, ['principal','visualizador'])) {
+        // 3) Validaciones condicionales por rol
+        if (in_array($rolKey, ['principal','visualizador'], true)) {
             $request->validate([
                 'empresas_principales'   => 'required|array|min:1',
                 'empresas_principales.*' => 'exists:empresas,id',
             ]);
         }
 
-        if (in_array($rol, ['contratista','sub contratista','subcontratista','prevencionista'])) {
+        if (in_array($rolKey, ['contratista','subcontratista','prevencionista'], true)) {
             $request->validate([
-                'empresas_principales'      => 'nullable|array',
-                'empresas_principales.*'    => 'exists:empresas,id',
-                'empresas_contratistas'     => 'nullable|array',
-                'empresas_contratistas.*'   => 'exists:empresas,id',
-                'empresas_subcontratistas'  => 'nullable|array',
-                'empresas_subcontratistas.*'=> 'exists:empresas,id',
+                'empresas_principales'       => 'nullable|array',
+                'empresas_principales.*'     => 'exists:empresas,id',
+                'empresas_contratistas'      => 'nullable|array',
+                'empresas_contratistas.*'    => 'exists:empresas,id',
+                'empresas_subcontratistas'   => 'nullable|array',
+                'empresas_subcontratistas.*' => 'exists:empresas,id',
             ]);
         }
 
-        // Campos extra para prevencionista
+        // 4) Campos extra para prevencionista
         $firmaPath = null;
-        if ($rol === 'prevencionista') {
+        if ($rolKey === 'prevencionista') {
             $request->validate([
                 'seremi_registro' => 'required|string|max:255',
                 'firma'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
             if ($request->hasFile('firma')) {
-                $firmaPath = $request->file('firma')->store('firmas', 'public'); // storage/app/public/firmas
+                $firmaPath = $request->file('firma')->store('firmas', 'public');
             }
         }
 
-        // Crear usuario
+        // 5) Crear usuario
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role_id'  => $request->role_id, // opcional si mantienes esta columna
+            'role_id'  => $request->role_id, // si mantienes esta columna
             'activo'   => true,
         ]);
 
-        // Si quieres evitar fillable, asigna puntualmente (por si no agregaste a $fillable)
-        if ($rol === 'prevencionista') {
-            $user->seremi_registro = $request->input('seremi_registro'); // asegúrate de tener esta columna
-            $user->firma_path      = $firmaPath;                          // asegúrate de tener esta columna
+        if ($rolKey === 'prevencionista') {
+            $user->seremi_registro = $request->input('seremi_registro');
+            $user->firma_path      = $firmaPath;
             $user->save();
         }
 
-        // Rol de Spatie
+        // 6) Rol de Spatie
         $user->syncRoles([$roleName]);
 
-        // Asociaciones a empresas (pivot con 'relacion')
+        // 7) Armar asociaciones a empresas (pivot 'relacion')
         $attach = [];
 
-        // Principales (para todos los roles que lo permiten)
         foreach ((array) $request->input('empresas_principales', []) as $id) {
             $attach[$id] = ['relacion' => 'principal'];
         }
-        // Contratistas
         foreach ((array) $request->input('empresas_contratistas', []) as $id) {
             $attach[$id] = ['relacion' => 'contratista'];
         }
-        // Subcontratistas
         foreach ((array) $request->input('empresas_subcontratistas', []) as $id) {
             $attach[$id] = ['relacion' => 'subcontratista'];
         }
 
-        // Si el rol es 'principal' o 'visualizador', solo usaremos el grupo de 'principales' (ya cargado arriba)
-
-        // Persistir relaciones (reemplaza por completo)
-        $user->empresas()->sync($attach);
+        // 8) Sincronizar SOLO si el rol usa asociaciones
+        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista'];
+        if (in_array($rolKey, $rolesConEmpresas, true)) {
+            $user->empresas()->sync($attach);
+        }
 
         return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario creado correctamente');
@@ -178,7 +173,7 @@ class UserController extends Controller
     {
         $usuario = User::with('roles','empresas')->findOrFail($id);
 
-        // Validación base
+        // 1) Validación base
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email,'.$usuario->id,
@@ -186,20 +181,20 @@ class UserController extends Controller
             'password' => 'nullable|confirmed|min:6',
         ]);
 
-        // Determinar rol
+        // 2) Determinar rol (Spatie) y normalizar clave
         $role     = Role::findById($request->role_id, 'web');
         $roleName = $role->name;
-        $rol      = strtolower(trim($roleName));
+        $rolKey   = strtolower(str_replace(' ', '', trim($roleName)));
 
-        // Validaciones condicionales (mismas reglas que en create)
-        if (in_array($rol, ['principal','visualizador'])) {
+        // 3) Validaciones condicionales por rol
+        if (in_array($rolKey, ['principal','visualizador'], true)) {
             $request->validate([
                 'empresas_principales'   => 'required|array|min:1',
                 'empresas_principales.*' => 'exists:empresas,id',
             ]);
         }
 
-        if (in_array($rol, ['contratista','sub contratista','subcontratista','prevencionista'])) {
+        if (in_array($rolKey, ['contratista','subcontratista','prevencionista'], true)) {
             $request->validate([
                 'empresas_principales'       => 'nullable|array',
                 'empresas_principales.*'     => 'exists:empresas,id',
@@ -210,22 +205,19 @@ class UserController extends Controller
             ]);
         }
 
-        // Campos extra para prevencionista
-        $firmaPath = null;
-        if ($rol === 'prevencionista') {
+        // 4) Prevencionista: firma + SEREMI
+        if ($rolKey === 'prevencionista') {
             $request->validate([
                 'seremi_registro' => 'required|string|max:255',
                 'firma'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
                 'remove_firma'    => 'nullable|boolean',
             ]);
 
-            // Reemplazo/borra firma
             if ($request->hasFile('firma')) {
                 if ($usuario->firma_path) {
                     Storage::disk('public')->delete($usuario->firma_path);
                 }
-                $firmaPath = $request->file('firma')->store('firmas', 'public');
-                $usuario->firma_path = $firmaPath;
+                $usuario->firma_path = $request->file('firma')->store('firmas', 'public');
             } elseif ($request->boolean('remove_firma')) {
                 if ($usuario->firma_path) {
                     Storage::disk('public')->delete($usuario->firma_path);
@@ -235,13 +227,13 @@ class UserController extends Controller
 
             $usuario->seremi_registro = $request->input('seremi_registro');
         } else {
-            // Si dejó de ser prevencionista, opcionalmente limpia estos campos:
-            // $usuario->seremi_registro = null;
-            // if ($usuario->firma_path) { Storage::disk('public')->delete($usuario->firma_path); }
+            // Si quieres limpiar al cambiar de rol, descomenta:
+            // if ($usuario->firma_path) Storage::disk('public')->delete($usuario->firma_path);
             // $usuario->firma_path = null;
+            // $usuario->seremi_registro = null;
         }
 
-        // Datos base
+        // 5) Datos base
         $usuario->name  = $request->name;
         $usuario->email = $request->email;
 
@@ -252,29 +244,32 @@ class UserController extends Controller
         $usuario->role_id = $request->role_id; // si mantienes esta columna
         $usuario->save();
 
-        // Actualizar rol de Spatie
+        // 6) Rol de Spatie (¡ojo con la variable!)
         $usuario->syncRoles([$roleName]);
 
-        // Armar asociaciones de empresas por tipo
+        // 7) Armar asociaciones a empresas (pivot 'relacion')
         $attach = [];
 
-        // Principales (requerido en principal/visualizador)
-        foreach ((array) $request->input('empresas_principales', []) as $idEmp) {
-            $attach[$idEmp] = ['relacion' => 'principal'];
+        foreach ((array) $request->input('empresas_principales', []) as $id) {
+            $attach[$id] = ['relacion' => 'principal'];
         }
-
-        // Contratistas / Subcontratistas (solo para roles que corresponden)
-        if (in_array($rol, ['contratista','sub contratista','subcontratista','prevencionista'])) {
-            foreach ((array) $request->input('empresas_contratistas', []) as $idEmp) {
-                $attach[$idEmp] = ['relacion' => 'contratista'];
+        if (in_array($rolKey, ['contratista','subcontratista','prevencionista'], true)) {
+            foreach ((array) $request->input('empresas_contratistas', []) as $id) {
+                $attach[$id] = ['relacion' => 'contratista'];
             }
-            foreach ((array) $request->input('empresas_subcontratistas', []) as $idEmp) {
-                $attach[$idEmp] = ['relacion' => 'subcontratista'];
+            foreach ((array) $request->input('empresas_subcontratistas', []) as $id) {
+                $attach[$id] = ['relacion' => 'subcontratista'];
             }
         }
 
-        // Si es principal/visualizador, sólo se consideran 'principales' (ya cargado arriba)
-        $usuario->empresas()->sync($attach);
+        // 8) Sincronizar SOLO si el rol usa asociaciones
+        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista'];
+        if (in_array($rolKey, $rolesConEmpresas, true)) {
+            $usuario->empresas()->sync($attach);
+        } else {
+            // Si cambió a un rol sin empresas y quieres limpiar, descomenta:
+            // $usuario->empresas()->sync([]);
+        }
 
         return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario actualizado correctamente');

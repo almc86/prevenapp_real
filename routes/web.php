@@ -5,6 +5,13 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\Admin\EmpresaController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middlewares\RoleMiddleware;
+use App\Http\Controllers\Admin\ConfiguracionController;
+use App\Http\Controllers\Admin\TipoDocumentoController;
+use App\Http\Controllers\Admin\DocumentoController;
+use App\Http\Controllers\Admin\CategoriaController;
+use App\Http\Controllers\Admin\CargoController;
+use App\Http\Controllers\Admin\MarcaFlotaController;
+use App\Http\Controllers\Admin\FeriadoController;
 
 
 Route::get('/_check', fn() => 'ok')
@@ -34,6 +41,18 @@ Route::middleware(['auth','role:administrador'])
         Route::resource('empresas', App\Http\Controllers\Admin\EmpresaController::class);
         Route::get('regiones/{region}/comunas', [EmpresaController::class,'comunasPorRegion'])
         ->name('regiones.comunas');
+
+        Route::get('configuracion', [ConfiguracionController::class, 'index'])
+            ->name('config.index');
+
+        Route::resource('cargos', App\Http\Controllers\Admin\CargoController::class)
+        ->only(['index','create','store']);
+
+        Route::resource('tipos-documento', TipoDocumentoController::class)->only(['index','create','store','edit','update']);
+        Route::resource('documentos',        DocumentoController::class)->only(['index','create','store']);
+        Route::resource('categorias',        CategoriaController::class)->only(['index','create','store']);
+        Route::resource('marcas-flota',      MarcaFlotaController::class)->only(['index','create','store']);
+        Route::resource('feriados',          FeriadoController::class)->only(['index','create','store']);
     });
 
 
