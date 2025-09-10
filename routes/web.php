@@ -52,7 +52,7 @@ Route::middleware(['auth','role:administrador'])
         Route::resource('documentos',        DocumentoController::class)->only(['index','create','store']);
         Route::resource('categorias',        CategoriaController::class)->only(['index','create','store']);
         Route::resource('marcas-flota',      MarcaFlotaController::class)->only(['index','create','store']);
-        Route::resource('feriados',          FeriadoController::class)->only(['index','create','store']);
+        Route::resource('feriados',          FeriadoController::class)->only(['index', 'create', 'store']);
     });
 
 

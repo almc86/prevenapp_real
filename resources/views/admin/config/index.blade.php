@@ -87,7 +87,7 @@
 
     {{-- Feriados --}}
     <div class="col">
-      <a href="{{ route('admin.feriados.create') }}" class="text-decoration-none text-reset">
+      <a href="{{ route('admin.feriados.index') }}" class="text-decoration-none text-reset">
         <div class="card shadow-sm h-100 border-0 card-hover">
           <div class="card-body d-flex align-items-start gap-3">
             <i class="bx bx-calendar-event fs-1"></i>
