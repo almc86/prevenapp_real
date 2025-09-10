@@ -31,12 +31,12 @@
         </a>
       </li>
 
-      <li class="menu-item">
-        <a href="#" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-cog"></i>
-          <div>Configuración</div>
+      <li class="menu-item {{ request()->routeIs('admin.config.index') ? 'active' : '' }}">
+        <a href="{{ route('admin.config.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-cog"></i>
+            <div>Configuración</div>
         </a>
-      </li>
+     </li>
     @endrole
 
     {{-- Menús para otros roles pueden agregarse aquí con else/elseif --}}
