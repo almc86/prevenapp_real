@@ -49,7 +49,6 @@ Route::middleware(['auth','role:administrador'])
         Route::resource('cargos', App\Http\Controllers\Admin\CargoController::class)
         ->only(['index','create','store']);
 
-<<<<<<< HEAD
         Route::resource('tipos-documento', TipoDocumentoController::class)->only(['index','create','store','edit','update','destroy']);
         Route::resource('documentos', DocumentoController::class)->only(['index','create','store','edit','update','destroy']);
         Route::resource('categorias',        CategoriaController::class)->only(['index','create','store','edit','update','destroy']);
@@ -87,13 +86,6 @@ Route::middleware(['auth','role:administrador'])
         Route::delete('config-empresas/doc-config/{config}/items/{item}', [ConfigEmpresaController::class,'destroyItem'])
             ->name('config-empresas.items.destroy');
 
-=======
-        Route::resource('tipos-documento', TipoDocumentoController::class)->only(['index','create','store','edit','update']);
-        Route::resource('documentos',        DocumentoController::class)->only(['index','create','store']);
-        Route::resource('categorias',        CategoriaController::class)->only(['index','create','store']);
-        Route::resource('marcas-flota',      MarcaFlotaController::class)->only(['index','create','store']);
-        Route::resource('feriados',          FeriadoController::class)->only(['index', 'create', 'store']);
->>>>>>> vicente_valdes
     });
 
 
