@@ -27,7 +27,7 @@
 
     {{-- Documento --}}
     <div class="col">
-      <a href="{{ route('admin.documentos.create') }}" class="text-decoration-none text-reset">
+      <a href="{{ route('admin.documentos.index') }}" class="text-decoration-none text-reset">
         <div class="card shadow-sm h-100 border-0 card-hover">
           <div class="card-body d-flex align-items-start gap-3">
             <i class="bx bx-folder fs-1"></i>
@@ -42,7 +42,7 @@
 
     {{-- Categoría --}}
     <div class="col">
-      <a href="{{ route('admin.categorias.create') }}" class="text-decoration-none text-reset">
+      <a href="{{ route('admin.categorias.index') }}" class="text-decoration-none text-reset">
         <div class="card shadow-sm h-100 border-0 card-hover">
           <div class="card-body d-flex align-items-start gap-3">
             <i class="bx bx-category fs-1"></i>
@@ -102,7 +102,7 @@
 
     {{-- Configurar Empresas --}}
     <div class="col">
-        <a href="{{ route('admin.empresas.index') }}" class="text-decoration-none text-reset">
+        <a href="{{ route('admin.config-empresas.index') }}" class="text-decoration-none text-reset">
             <div class="card shadow-sm h-100 border-0 card-hover">
                 <div class="card-body d-flex align-items-start gap-3">
                     <i class="bx bx-buildings fs-1"></i>
@@ -114,6 +114,22 @@
             </div>
         </a>
     </div>
+
+    {{-- Tipo de Cobros --}}
+    <div class="col">
+        <a href="{{ route('admin.tipos-cobro.index') }}" class="text-decoration-none text-reset">
+            <div class="card shadow-sm h-100 border-0 card-hover">
+            <div class="card-body d-flex align-items-start gap-3">
+                <i class="bx bx-money fs-1"></i> {{-- icono Boxicons --}}
+                <div>
+                <h5 class="card-title mb-1">Tipo de Cobros</h5>
+                <p class="text-muted mb-0">Define y administra los tipos de cobro.</p>
+                </div>
+            </div>
+            </div>
+        </a>
+    </div>
+
 
 
 
