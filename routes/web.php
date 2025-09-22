@@ -54,7 +54,7 @@ Route::middleware(['auth','role:administrador'])
         Route::resource('categorias',        CategoriaController::class)->only(['index','create','store','edit','update','destroy']);
         Route::resource('marcas-flota',      MarcaFlotaController::class)->only(['index','create','store','edit','update','destroy']);
         Route::resource('feriados',          FeriadoController::class)->only(['index','create','store']);
-        Route::resource('tipos-cobro', App\Http\Controllers\Admin\TipoCobroController::class)->only(['index','create']);
+        Route::resource('tipos-cobro', App\Http\Controllers\Admin\TipoCobroController::class);
 
         Route::get('config-empresas', [ConfigEmpresaController::class,'index'])
             ->name('config-empresas.index');
