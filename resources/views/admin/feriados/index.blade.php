@@ -2,59 +2,61 @@
 
 @section('title','Feriados')
 
-{{-- Esta vista NO necesita el JS del template --}}
-@section('skip-template-js', true)
-
-@push('head')
-<script>
-  // Fallback por si algún layout antiguo cargara main.js antes:
-  window.Helpers = window.Helpers || {};
-  window.Helpers.setCollapsed = window.Helpers.setCollapsed || function(){};
-</script>
-@endpush
-
 @section('content')
-<div class="container">
-  <!-- <h2 class="mb-4">Feriados</h2> -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Feriados</h2>
-    <a href="{{ route('admin.feriados.create') }}" class="btn btn-primary">
-      <i class="bx bx-plus"></i> Nuevo feriado empresarial
-    </a>
+<div class="space-y-6">
+  {{-- Header --}}
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold leading-tight text-gray-900">Feriados</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Calendario de feriados organizados por año para validaciones del sistema.
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a href="{{ route('admin.feriados.create') }}" class="btn btn-primary">
+        <i class="bx bx-plus mr-2"></i>
+        Nuevo feriado empresarial
+      </a>
+    </div>
   </div>
 
-  <div class="accordion" id="accordionFeriados">
+  {{-- Acordeones por año --}}
+  <div class="space-y-4" id="accordionFeriados">
     @foreach ($feriados->groupBy(fn($f) => \Carbon\Carbon::parse($f->fecha_feriado_date)->year) as $anio => $feriadosAnio)
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="heading-{{ $anio }}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapse-{{ $anio }}" aria-expanded="false"
-                  aria-controls="collapse-{{ $anio }}">
-            {{ $anio }}
-          </button>
-        </h2>
-        <div id="collapse-{{ $anio }}" class="accordion-collapse collapse"
-             aria-labelledby="heading-{{ $anio }}" data-bs-parent="#accordionFeriados">
-          <div class="accordion-body">
-            <div class="row">
+      <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+        {{-- Header del acordeón --}}
+        <button type="button"
+                class="accordion-toggle w-full px-6 py-4 text-left font-medium text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset flex items-center justify-between transition-colors"
+                data-target="collapse-{{ $anio }}">
+          <span class="text-lg font-semibold">{{ $anio }}</span>
+          <i class="bx bx-chevron-down text-xl text-gray-500 transition-transform duration-200 rotate-icon"></i>
+        </button>
+
+        {{-- Contenido del acordeón --}}
+        <div id="collapse-{{ $anio }}" class="accordion-content hidden">
+          <div class="p-6 border-t border-gray-200 bg-gray-50">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for ($mes = 1; $mes <= 12; $mes++)
-                <div class="col-md-3 mb-3">
-                  <div class="card">
-                    <div class="card-header text-center fw-bold">
-                      {{ \Carbon\Carbon::create()->month($mes)->locale('es')->isoFormat('MMMM') }}
-                    </div>
-                    <div class="card-body p-2">
-                      <table class="table table-sm text-center mb-0 calendario"
-                             data-anio="{{ $anio }}" data-mes="{{ $mes }}">
-                        <thead>
-                          <tr>
-                            <th>Do</th><th>Lu</th><th>Ma</th><th>Mi</th>
-                            <th>Ju</th><th>Vi</th><th>Sa</th>
-                          </tr>
-                        </thead>
-                        <tbody><!-- JS genera los días --></tbody>
-                      </table>
-                    </div>
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div class="bg-primary-600 text-white text-center py-2 font-semibold">
+                    {{ \Carbon\Carbon::create()->month($mes)->locale('es')->isoFormat('MMMM') }}
+                  </div>
+                  <div class="p-2">
+                    <table class="calendario w-full text-center text-sm"
+                           data-anio="{{ $anio }}" data-mes="{{ $mes }}">
+                      <thead>
+                        <tr>
+                          <th class="p-1 text-xs font-medium text-gray-500">Do</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Lu</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Ma</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Mi</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Ju</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Vi</th>
+                          <th class="p-1 text-xs font-medium text-gray-500">Sa</th>
+                        </tr>
+                      </thead>
+                      <tbody><!-- JS genera los días --></tbody>
+                    </table>
                   </div>
                 </div>
               @endfor
@@ -70,6 +72,25 @@
 @push('scripts')
 <script>
 (function () {
+  // Funcionalidad del acordeón
+  document.querySelectorAll('.accordion-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.dataset.target;
+      const content = document.getElementById(targetId);
+      const icon = this.querySelector('.rotate-icon');
+
+      if (content.classList.contains('hidden')) {
+        // Abrir
+        content.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        // Cerrar
+        content.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    });
+  });
+
   // Mapa YYYY-MM-DD => descripción
   const feriados = new Map(
     @json(
@@ -80,6 +101,7 @@
     )
   );
 
+  // Generar calendarios
   document.querySelectorAll(".calendario").forEach(tabla => {
     const y = Number(tabla.dataset.anio);
     const m = Number(tabla.dataset.mes);
@@ -91,16 +113,22 @@
     let tr = document.createElement("tr");
 
     // Celdas vacías antes del primer día (0=Dom ... 6=Sáb)
-    for (let i = 0; i < first.getDay(); i++) tr.appendChild(document.createElement("td"));
+    for (let i = 0; i < first.getDay(); i++) {
+      const td = document.createElement("td");
+      td.className = "p-1 h-8";
+      tr.appendChild(td);
+    }
 
     for (let d = 1; d <= last.getDate(); d++) {
       const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const td = document.createElement("td");
       td.textContent = d;
+      td.className = "p-1 h-8 hover:bg-gray-100 cursor-pointer transition-colors";
 
       const desc = feriados.get(dateStr);
       if (desc) {
-        td.classList.add("feriado");
+        td.classList.remove("hover:bg-gray-100");
+        td.classList.add("feriado", "bg-red-100", "text-red-800", "font-semibold", "rounded");
         td.title = desc;
       }
 
@@ -115,15 +143,4 @@
   });
 })();
 </script>
-
-<style>
-  .card-header{ background:#f6f8fb; }
-  .calendario{ table-layout:fixed; width:100%; }
-  .calendario th, .calendario td{
-    padding:.35rem; font-size:.85rem; height:34px; vertical-align:middle;
-  }
-  .calendario td.feriado{
-    background:#ffe6e6; color:#a10000; font-weight:600; border-radius:4px;
-  }
-</style>
 @endpush

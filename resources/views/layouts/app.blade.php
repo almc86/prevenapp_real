@@ -1,83 +1,93 @@
 <!DOCTYPE html>
-<html lang="es" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default">
+<html lang="es" class="h-full bg-gray-50">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@yield('title', 'Panel de Control')</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>@yield('title', 'Panel de Control') - {{ config('app.name', 'PrevenApp') }}</title>
 
-  <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/css/core.css') }}">
-  <link rel="stylesheet" href="{{ asset('sneat/assets/css/demo.css') }}">
-  <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}">
+  {{-- Fonts --}}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  {{-- Icons --}}
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  {{-- Scripts --}}
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   {{-- Permitir a las vistas inyectar cosas en <head> --}}
   @stack('head')
 </head>
-<body>
-  <div class="layout-wrapper layout-content-navbar">
-    <div class="layout-container">
-      @include('layouts.sidebar')
-      <div class="layout-page">
-        @include('layouts.topbar')
-        <div class="content-wrapper">
-          <div class="container-xxl flex-grow-1 container-p-y">
-            @yield('content')
-          </div>
+<body class="h-full bg-gray-50">
+  <div class="min-h-full">
+    {{-- Sidebar para desktop --}}
+    @include('layouts.sidebar')
+
+    {{-- Layout principal --}}
+    <div class="lg:pl-72">
+      {{-- Topbar --}}
+      @include('layouts.topbar')
+
+      {{-- Contenido principal --}}
+      <main class="py-6">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          @yield('content')
         </div>
-      </div>
+      </main>
     </div>
   </div>
 
-  {{-- JS base de Sneat (seguros) --}}
-  <script src="{{ asset('sneat/assets/vendor/js/helpers.js') }}"></script>
-  <script src="{{ asset('sneat/assets/vendor/js/menu.js') }}"></script>
-  <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
-
-  {{-- Airbag: define funciones mínimas si no existen (incluye setCollapsed) --}}
+  {{-- Scripts de la aplicación --}}
   <script>
-    window.Helpers = window.Helpers || {};
-    ['initSpeechToText','initPasswordToggle','setAutoUpdate','scrollToActive','isSmallScreen','setCollapsed']
-      .forEach(function(fn){
-        if (typeof window.Helpers[fn] !== 'function') {
-          window.Helpers[fn] = function(){ /* noop */ };
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      if (mobileMenuButton && sidebar && overlay) {
+        function toggleSidebar() {
+          sidebar.classList.toggle('-translate-x-full');
+          overlay.classList.toggle('hidden');
         }
-      });
-    if (!window.Helpers.isSmallScreen) {
-      window.Helpers.isSmallScreen = function(){ return window.innerWidth < 1200; };
-    }
-    if (!window.Helpers.scrollToActive) {
-      window.Helpers.scrollToActive = function(){ /* noop */ };
-    }
-  </script>
 
-  {{-- ✅ Bootstrap JS: necesario para acordeón/collapse --}}
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  {{-- Si prefieres local, cambia por:
-  <script src="{{ asset('sneat/assets/vendor/js/bootstrap.js') }}"></script>
-  --}}
+        mobileMenuButton.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+      }
 
-  {{-- Cargar main.js SOLO si la vista NO pidió saltarlo --}}
-  @hasSection('skip-template-js')
-    {{-- Saltamos sneat/assets/js/main.js en esta vista --}}
-  @else
-    <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
-  @endif
-
-  {{-- JS propio de cada vista (donde se hace @push('scripts')) --}}
-  @stack('scripts')
-
-  {{-- Tu script del submenu (opcional) --}}
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
+      // Submenu toggles
       document.querySelectorAll('.submenu-toggle').forEach(btn => {
         btn.addEventListener('click', function () {
           const submenu = this.nextElementSibling;
-          if (submenu) submenu.classList.toggle('hidden');
-          const icon = this.querySelector('.rotate-icon');
-          if (icon) icon.classList.toggle('rotate-180');
+          if (submenu) {
+            submenu.classList.toggle('hidden');
+            const icon = this.querySelector('.rotate-icon');
+            if (icon) icon.classList.toggle('rotate-180');
+          }
         });
       });
+
+      // Auto-close mobile sidebar on larger screens
+      function handleResize() {
+        if (window.innerWidth >= 1024) { // lg breakpoint
+          // En desktop, el sidebar debe estar visible
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.add('hidden');
+        } else {
+          // En móvil, mantener cerrado por defecto
+          sidebar.classList.add('-translate-x-full');
+        }
+      }
+
+      window.addEventListener('resize', handleResize);
+
+      // Establecer estado inicial correcto
+      handleResize();
     });
   </script>
+
+  {{-- JS propio de cada vista --}}
+  @stack('scripts')
 </body>
 </html>

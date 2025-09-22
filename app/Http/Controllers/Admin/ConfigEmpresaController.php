@@ -36,6 +36,11 @@ class ConfigEmpresaController extends Controller
   }
 
   public function show(Empresa $empresa, Configuracion $config) {
+    // Asegurar que la configuración pertenece a la empresa
+    if ($config->empresa_id !== $empresa->id) {
+        abort(404);
+    }
+
     // categorías ya asociadas
     $catsSel = Categoria::join('configuracion_categoria as cc','cc.categoria_id','=','categorias.id')
               ->where('cc.configuracion_id',$config->id)

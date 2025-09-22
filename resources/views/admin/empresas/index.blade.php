@@ -3,66 +3,149 @@
 @section('title','Empresas')
 
 @section('content')
-<div class="container">
+<div class="space-y-6">
+  {{-- Alertas --}}
   @if(session('success'))
-    <div class="alert alert-success mb-3">{{ session('success') }}</div>
+    <div class="alert alert-success">
+      <i class="bx bx-check-circle mr-2"></i>
+      {{ session('success') }}
+    </div>
   @endif
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="m-0">Empresas</h3>
-    <a href="{{ route('admin.empresas.create') }}" class="btn btn-primary">Nueva empresa</a>
+  {{-- Header --}}
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold leading-tight text-gray-900">Empresas</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Gestiona todas las empresas del sistema y sus configuraciones.
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a href="{{ route('admin.empresas.create') }}" class="btn btn-primary">
+        <i class="bx bx-plus mr-2"></i>
+        Nueva empresa
+      </a>
+    </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead>
-        <tr>
-          <th>RUT</th>
-          <th>Nombre</th>
-          <th>Región</th>
-          <th>Comuna</th>
-          <th>Teléfono</th>
-          <th>Correo</th>
-          <th>logo</th>
-          <th style="width:150px;">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($empresas as $e)
-          <tr>
-            <td>{{ $e->rut_empresa }}</td>
-            <td>{{ $e->nombre_empresa }}</td>
-            <td>{{ $e->region_id ? ($e->region->nombre ?? '-') : ($e->region ?? '-') }}</td>
-            <td>{{ $e->comuna_id ? ($e->comuna->nombre ?? '-') : ($e->comuna ?? '-') }}</td>
-            <td>{{ $e->telefono }}</td>
-            <td>{{ $e->correo_empresa }}</td>
-            <td>
+  {{-- Lista de empresas --}}
+  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+    @forelse($empresas as $e)
+      <div class="border-b border-gray-200 last:border-b-0">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              {{-- Logo --}}
+              <div class="flex-shrink-0">
                 @if($e->logo_path)
-                    <img src="{{ Storage::url($e->logo_path) }}" alt="Logo" class="img-thumbnail"
-                        style="width:48px;height:48px;object-fit:contain;">
+                  <img src="{{ Storage::url($e->logo_path) }}" alt="Logo"
+                       class="h-12 w-12 rounded-lg object-contain border border-gray-200">
                 @else
-                    —
+                  <div class="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <i class="bx bx-buildings text-xl text-gray-400"></i>
+                  </div>
                 @endif
-            </td>
+              </div>
 
-            <td class="d-flex gap-2">
-              <a href="{{ route('admin.empresas.edit', $e) }}" class="btn btn-sm btn-warning">Editar</a>
-              <form action="{{ route('admin.empresas.destroy', $e) }}" method="POST"
-                    onsubmit="return confirm('¿Eliminar empresa?')">
+              {{-- Información principal --}}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-lg font-medium text-gray-900 truncate">
+                    {{ $e->nombre_empresa }}
+                  </h3>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Activa
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">RUT: {{ $e->rut_empresa }}</p>
+
+                {{-- Información adicional en mobile --}}
+                <div class="mt-2 sm:hidden">
+                  <div class="text-sm text-gray-500 space-y-1">
+                    <div class="flex items-center">
+                      <i class="bx bx-map text-xs mr-1"></i>
+                      {{ $e->region_id ? ($e->region->nombre ?? '-') : ($e->region ?? '-') }},
+                      {{ $e->comuna_id ? ($e->comuna->nombre ?? '-') : ($e->comuna ?? '-') }}
+                    </div>
+                    @if($e->telefono)
+                      <div class="flex items-center">
+                        <i class="bx bx-phone text-xs mr-1"></i>
+                        {{ $e->telefono }}
+                      </div>
+                    @endif
+                    @if($e->correo_empresa)
+                      <div class="flex items-center">
+                        <i class="bx bx-envelope text-xs mr-1"></i>
+                        {{ $e->correo_empresa }}
+                      </div>
+                    @endif
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {{-- Acciones --}}
+            <div class="flex items-center space-x-2">
+              <a href="{{ route('admin.empresas.edit', $e) }}"
+                 class="btn btn-sm btn-secondary">
+                <i class="bx bx-edit text-sm"></i>
+                <span class="hidden sm:inline ml-1">Editar</span>
+              </a>
+              <form action="{{ route('admin.empresas.destroy', $e) }}" method="POST" class="inline"
+                    onsubmit="return confirm('¿Eliminar empresa {{ $e->nombre_empresa }}?')">
                 @csrf @method('DELETE')
-                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                  <i class="bx bx-trash text-sm"></i>
+                  <span class="hidden sm:inline ml-1">Eliminar</span>
+                </button>
               </form>
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="7" class="text-center text-muted">No hay empresas registradas.</td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
+            </div>
+          </div>
+
+          {{-- Información adicional para desktop --}}
+          <div class="hidden sm:block mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span class="text-gray-500">Ubicación:</span>
+                <p class="font-medium text-gray-900">
+                  {{ $e->region_id ? ($e->region->nombre ?? '-') : ($e->region ?? '-') }},
+                  {{ $e->comuna_id ? ($e->comuna->nombre ?? '-') : ($e->comuna ?? '-') }}
+                </p>
+              </div>
+              <div>
+                <span class="text-gray-500">Teléfono:</span>
+                <p class="font-medium text-gray-900">{{ $e->telefono ?: '-' }}</p>
+              </div>
+              <div>
+                <span class="text-gray-500">Correo:</span>
+                <p class="font-medium text-gray-900">{{ $e->correo_empresa ?: '-' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    @empty
+      <div class="text-center py-12">
+        <div class="mx-auto h-12 w-12 text-gray-400">
+          <i class="bx bx-buildings text-4xl"></i>
+        </div>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No hay empresas</h3>
+        <p class="mt-1 text-sm text-gray-500">Comienza creando una nueva empresa.</p>
+        <div class="mt-6">
+          <a href="{{ route('admin.empresas.create') }}" class="btn btn-primary">
+            <i class="bx bx-plus mr-2"></i>
+            Nueva empresa
+          </a>
+        </div>
+      </div>
+    @endforelse
   </div>
 
-  {{ method_exists($empresas, 'links') ? $empresas->links() : '' }}
+  {{-- Paginación --}}
+  @if(method_exists($empresas, 'links'))
+    <div class="flex justify-center">
+      {{ $empresas->links() }}
+    </div>
+  @endif
 </div>
 @endsection

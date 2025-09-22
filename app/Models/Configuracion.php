@@ -8,6 +8,7 @@ class Configuracion extends Model {
   protected $fillable = ['empresa_id','nombre','descripcion','estado','created_by'];
   protected $casts = ['estado'=>'boolean'];
   public function empresa(){ return $this->belongsTo(Empresa::class); }
+  public function creator(){ return $this->belongsTo(User::class, 'created_by'); }
   public function categorias(){ return $this->hasMany(ConfiguracionCategoria::class); }
   public function documentos(){ return $this->hasMany(ConfiguracionCategoriaDocumento::class); }
 }

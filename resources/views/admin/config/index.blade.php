@@ -3,142 +3,241 @@
 @section('title','Configuración')
 
 @section('content')
-<div class="container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="m-0">Configuración</h3>
+<div class="space-y-6">
+  {{-- Header --}}
+  <div class="md:flex md:items-center md:justify-between">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        Configuración del Sistema
+      </h2>
+      <p class="mt-1 text-sm text-gray-500">
+        Administra todos los aspectos de configuración del sistema desde aquí.
+      </p>
+    </div>
   </div>
 
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+  {{-- Grid de opciones de configuración --}}
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
     {{-- Tipo de documento --}}
-    <div class="col">
-      <a href="{{ route('admin.tipos-documento.index') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-file fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Tipo de Documento</h5>
-              <p class="text-muted mb-0">Define nuevos tipos para clasificar documentos.</p>
+    <a href="{{ route('admin.tipos-documento.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 group-hover:bg-primary-200 transition-colors">
+              <i class="bx bx-file text-2xl text-primary-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
+                Tipos de Documento
+              </h3>
+              <p class="text-sm text-gray-500">
+                Define nuevos tipos para clasificar documentos.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Documento --}}
-    <div class="col">
-      <a href="{{ route('admin.documentos.index') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-folder fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Documento</h5>
-              <p class="text-muted mb-0">Sube o registra documentos del repositorio.</p>
+    <a href="{{ route('admin.documentos.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-success-100 group-hover:bg-success-200 transition-colors">
+              <i class="bx bx-folder text-2xl text-success-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-success-600 transition-colors">
+                Documentos
+              </h3>
+              <p class="text-sm text-gray-500">
+                Sube o registra documentos del repositorio.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Categoría --}}
-    <div class="col">
-      <a href="{{ route('admin.categorias.index') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-category fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Categoría</h5>
-              <p class="text-muted mb-0">Organiza los documentos por categorías.</p>
+    <a href="{{ route('admin.categorias.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-100 group-hover:bg-warning-200 transition-colors">
+              <i class="bx bx-category text-2xl text-warning-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-warning-600 transition-colors">
+                Categorías
+              </h3>
+              <p class="text-sm text-gray-500">
+                Organiza los documentos por categorías.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Cargo --}}
-    <div class="col">
-      <a href="{{ route('admin.cargos.index') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-id-card fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Cargo</h5>
-              <p class="text-muted mb-0">Mantén el maestro de cargos actualizado.</p>
+    <a href="{{ route('admin.cargos.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors">
+              <i class="bx bx-id-card text-2xl text-purple-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-purple-600 transition-colors">
+                Cargos
+              </h3>
+              <p class="text-sm text-gray-500">
+                Mantén el maestro de cargos actualizado.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Marca Flota --}}
-    <div class="col">
-      <a href="{{ route('admin.marcas-flota.create') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-car fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Marca de Flota</h5>
-              <p class="text-muted mb-0">Maestro de marcas para vehículos/equipos.</p>
+    <a href="{{ route('admin.marcas-flota.create') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 group-hover:bg-indigo-200 transition-colors">
+              <i class="bx bx-car text-2xl text-indigo-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                Marca de Flota
+              </h3>
+              <p class="text-sm text-gray-500">
+                Maestro de marcas para vehículos/equipos.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Feriados --}}
-    <div class="col">
-      <a href="{{ route('admin.feriados.index') }}" class="text-decoration-none text-reset">
-        <div class="card shadow-sm h-100 border-0 card-hover">
-          <div class="card-body d-flex align-items-start gap-3">
-            <i class="bx bx-calendar-event fs-1"></i>
-            <div>
-              <h5 class="card-title mb-1">Crear Feriado</h5>
-              <p class="text-muted mb-0">Calendario de feriados para validaciones.</p>
+    <a href="{{ route('admin.feriados.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 group-hover:bg-red-200 transition-colors">
+              <i class="bx bx-calendar-event text-2xl text-red-600"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-red-600 transition-colors">
+                Feriados
+              </h3>
+              <p class="text-sm text-gray-500">
+                Calendario de feriados para validaciones.
+              </p>
             </div>
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
 
     {{-- Configurar Empresas --}}
-    <div class="col">
-        <a href="{{ route('admin.config-empresas.index') }}" class="text-decoration-none text-reset">
-            <div class="card shadow-sm h-100 border-0 card-hover">
-                <div class="card-body d-flex align-items-start gap-3">
-                    <i class="bx bx-buildings fs-1"></i>
-                    <div>
-                    <h5 class="card-title mb-1">Configurar Empresas</h5>
-                    <p class="text-muted mb-0">Crear y administrar empresas y sus datos.</p>
-                    </div>
-                </div>
+    <a href="{{ route('admin.config-empresas.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors">
+              <i class="bx bx-buildings text-2xl text-blue-600"></i>
             </div>
-        </a>
-    </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                Empresas
+              </h3>
+              <p class="text-sm text-gray-500">
+                Crear y administrar empresas y sus datos.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
 
     {{-- Tipo de Cobros --}}
-    <div class="col">
-        <a href="{{ route('admin.tipos-cobro.index') }}" class="text-decoration-none text-reset">
-            <div class="card shadow-sm h-100 border-0 card-hover">
-            <div class="card-body d-flex align-items-start gap-3">
-                <i class="bx bx-money fs-1"></i> {{-- icono Boxicons --}}
-                <div>
-                <h5 class="card-title mb-1">Tipo de Cobros</h5>
-                <p class="text-muted mb-0">Define y administra los tipos de cobro.</p>
-                </div>
+    <a href="{{ route('admin.tipos-cobro.index') }}" class="group">
+      <div class="card card-hover h-full">
+        <div class="card-body">
+          <div class="flex items-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors">
+              <i class="bx bx-money text-2xl text-green-600"></i>
             </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-gray-900 group-hover:text-green-600 transition-colors">
+                Tipos de Cobro
+              </h3>
+              <p class="text-sm text-gray-500">
+                Define y administra los tipos de cobro.
+              </p>
             </div>
-        </a>
-    </div>
-
-
-
+          </div>
+        </div>
+      </div>
+    </a>
 
   </div>
-</div>
 
-{{-- Estilo hover suave --}}
-<style>
-  .card-hover { transition: transform .1s ease, box-shadow .1s ease; }
-  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important; }
-</style>
+  {{-- Stats adicionales --}}
+  <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="bx bx-file text-2xl text-gray-400"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Documentos</dt>
+              <dd class="text-lg font-medium text-gray-900">1,234</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="bx bx-buildings text-2xl text-gray-400"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Empresas Activas</dt>
+              <dd class="text-lg font-medium text-gray-900">89</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="bx bx-user text-2xl text-gray-400"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Usuarios Registrados</dt>
+              <dd class="text-lg font-medium text-gray-900">456</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
