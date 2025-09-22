@@ -7,10 +7,10 @@
   {{-- Header --}}
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
         Nuevo Tipo de Cobro
       </h2>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Configura tipos de cobro según relación empresa, tipo de cobro/pago y rangos por cantidad de trabajadores.
       </p>
     </div>
@@ -38,13 +38,13 @@
   @endif
 
   {{-- Formulario --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
-    <form method="POST" action="{{ route('admin.tipos-cobro.store') }}" id="tipoCobroForm" class="divide-y divide-gray-200">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+    <form method="POST" action="{{ route('admin.tipos-cobro.store') }}" id="tipoCobroForm" class="divide-y divide-gray-200 dark:divide-gray-700">
       @csrf
 
       {{-- Selección de empresas --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
           <i class="bx bx-buildings mr-2"></i>
           Relación entre Empresas
         </h3>
@@ -79,7 +79,7 @@
 
       {{-- Configuración de cobro --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
           <i class="bx bx-credit-card mr-2"></i>
           Configuración de Cobro
         </h3>
@@ -127,7 +127,7 @@
       {{-- Rangos de cobro --}}
       <div class="px-6 py-6">
         <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-medium leading-6 text-gray-900">
+          <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
             <i class="bx bx-bar-chart mr-2"></i>
             Rangos de Cobro por Cantidad de Trabajadores
           </h3>
@@ -142,7 +142,7 @@
         <div id="rangos-container" class="space-y-4">
           @if(old('rangos'))
             @foreach(old('rangos') as $index => $rango)
-              <div class="rango-row bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div class="rango-row bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                   <div>
                     <label class="form-label">Desde (trabajadores) *</label>
@@ -168,7 +168,7 @@
                     <label class="form-label">Monto *</label>
                     <div class="relative">
                       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">$</span>
+                        <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
                       </div>
                       <input type="number"
                              name="rangos[{{ $index }}][monto]"
@@ -192,7 +192,7 @@
               </div>
             @endforeach
           @else
-            <div class="rango-row bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div class="rango-row bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
               <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                 <div>
                   <label class="form-label">Desde (trabajadores) *</label>
@@ -242,16 +242,16 @@
           @endif
         </div>
 
-        <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg border border-blue-200 dark:border-blue-700">
           <div class="flex">
             <div class="flex-shrink-0">
-              <i class="bx bx-info-circle text-blue-400 text-lg"></i>
+              <i class="bx bx-info-circle text-blue-400 dark:text-blue-300 text-lg"></i>
             </div>
             <div class="ml-3">
-              <h4 class="text-sm font-medium text-blue-800">
+              <h4 class="text-sm font-medium text-blue-800 dark:text-blue-200">
                 Información sobre rangos
               </h4>
-              <div class="mt-2 text-sm text-blue-700">
+              <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
                 <ul class="list-disc list-inside space-y-1">
                   <li>Define rangos de cantidad de trabajadores y el monto correspondiente para cada rango</li>
                   <li>Los rangos no deben solaparse entre sí</li>
@@ -264,7 +264,7 @@
       </div>
 
       {{-- Botones de acción --}}
-      <div class="px-6 py-4 bg-gray-50 flex items-center justify-end space-x-3">
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex items-center justify-end space-x-3">
         <a href="{{ route('admin.tipos-cobro.index') }}" class="btn btn-secondary">
           Cancelar
         </a>
@@ -284,7 +284,7 @@ let rangoIndex = {{ old('rangos') ? count(old('rangos')) : 1 }};
 function agregarRango() {
   const container = document.getElementById('rangos-container');
   const newRow = document.createElement('div');
-  newRow.className = 'rango-row bg-gray-50 rounded-lg p-4 border border-gray-200';
+  newRow.className = 'rango-row bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
   newRow.innerHTML = `
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
       <div>
@@ -309,7 +309,7 @@ function agregarRango() {
         <label class="form-label">Monto *</label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-gray-500 sm:text-sm">$</span>
+            <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
           </div>
           <input type="number"
                  name="rangos[${rangoIndex}][monto]"

@@ -7,10 +7,10 @@
   {{-- Header --}}
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
         Nuevo Feriado Empresarial
       </h2>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Agrega un nuevo feriado específico de la empresa al calendario.
       </p>
     </div>
@@ -23,7 +23,7 @@
   </div>
 
   {{-- Formulario --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden max-w-2xl mx-auto">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden max-w-2xl mx-auto">
     <div class="px-6 py-6">
       <form method="POST" action="{{ route('admin.feriados.store') }}" novalidate>
         @csrf

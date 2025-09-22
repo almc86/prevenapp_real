@@ -27,7 +27,7 @@
 
   {{-- Estadísticas principales --}}
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -37,9 +37,9 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Empresas</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Empresas</dt>
               <dd class="flex items-baseline">
-                <div class="text-2xl font-semibold text-gray-900">89</div>
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">89</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <i class="bx bx-trending-up text-xs mr-1"></i>
                   12%
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -61,9 +61,9 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Documentos</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Documentos</dt>
               <dd class="flex items-baseline">
-                <div class="text-2xl font-semibold text-gray-900">1,234</div>
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">1,234</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <i class="bx bx-trending-up text-xs mr-1"></i>
                   5%
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -85,9 +85,9 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Usuarios Activos</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Usuarios Activos</dt>
               <dd class="flex items-baseline">
-                <div class="text-2xl font-semibold text-gray-900">456</div>
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">456</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <i class="bx bx-trending-up text-xs mr-1"></i>
                   8%
@@ -99,7 +99,7 @@
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow-soft rounded-xl">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
           <div class="flex-shrink-0">
@@ -109,9 +109,9 @@
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Pendientes</dt>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Pendientes</dt>
               <dd class="flex items-baseline">
-                <div class="text-2xl font-semibold text-gray-900">23</div>
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">23</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
                   <i class="bx bx-trending-down text-xs mr-1"></i>
                   3%
@@ -127,14 +127,14 @@
   {{-- Grid de contenido --}}
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
     {{-- Actividad reciente --}}
-    <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
       <div class="p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
           <i class="bx bx-time mr-2"></i>
           Actividad Reciente
         </h3>
         <div class="flow-root">
-          <ul class="-my-5 divide-y divide-gray-200">
+          <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
             <li class="py-4">
               <div class="flex items-center space-x-4">
                 <div class="flex-shrink-0">
@@ -143,14 +143,14 @@
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                     Nueva empresa registrada
                   </p>
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
                     Constructora ABC S.A.
                   </p>
                 </div>
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
                   Hace 2 horas
                 </div>
               </div>
@@ -163,14 +163,14 @@
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                     Documento actualizado
                   </p>
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
                     Certificado de Seguridad
                   </p>
                 </div>
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
                   Hace 4 horas
                 </div>
               </div>
@@ -183,14 +183,14 @@
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 truncate">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                     Nuevo usuario registrado
                   </p>
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
                     Juan Pérez - Supervisor
                   </p>
                 </div>
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
                   Ayer
                 </div>
               </div>
@@ -207,44 +207,44 @@
     </div>
 
     {{-- Accesos rápidos --}}
-    <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
       <div class="p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
           <i class="bx bx-rocket mr-2"></i>
           Accesos Rápidos
         </h3>
         <div class="grid grid-cols-2 gap-4">
           @role('administrador')
             <a href="{{ route('admin.empresas.create') }}"
-               class="group flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 group-hover:bg-primary-200 transition-colors">
-                <i class="bx bx-plus text-xl text-primary-600"></i>
+               class="group flex flex-col items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary-300 dark:hover:border-primary-500 hover:shadow-sm transition-all">
+              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800 group-hover:bg-primary-200 dark:group-hover:bg-primary-700 transition-colors">
+                <i class="bx bx-plus text-xl text-primary-600 dark:text-primary-300"></i>
               </div>
-              <span class="mt-2 text-sm font-medium text-gray-900 text-center">Nueva Empresa</span>
+              <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white text-center">Nueva Empresa</span>
             </a>
 
             <a href="{{ route('admin.documentos.create') }}"
-               class="group flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-success-300 hover:shadow-sm transition-all">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-success-100 group-hover:bg-success-200 transition-colors">
-                <i class="bx bx-file-plus text-xl text-success-600"></i>
+               class="group flex flex-col items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-success-300 dark:hover:border-success-500 hover:shadow-sm transition-all">
+              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-success-100 dark:bg-success-800 group-hover:bg-success-200 dark:group-hover:bg-success-700 transition-colors">
+                <i class="bx bx-file-plus text-xl text-success-600 dark:text-success-300"></i>
               </div>
-              <span class="mt-2 text-sm font-medium text-gray-900 text-center">Nuevo Documento</span>
+              <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white text-center">Nuevo Documento</span>
             </a>
 
             <a href="{{ route('admin.usuarios.create') }}"
-               class="group flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-warning-300 hover:shadow-sm transition-all">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-100 group-hover:bg-warning-200 transition-colors">
-                <i class="bx bx-user-plus text-xl text-warning-600"></i>
+               class="group flex flex-col items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-warning-300 dark:hover:border-warning-500 hover:shadow-sm transition-all">
+              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-100 dark:bg-warning-800 group-hover:bg-warning-200 dark:group-hover:bg-warning-700 transition-colors">
+                <i class="bx bx-user-plus text-xl text-warning-600 dark:text-warning-300"></i>
               </div>
-              <span class="mt-2 text-sm font-medium text-gray-900 text-center">Nuevo Usuario</span>
+              <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white text-center">Nuevo Usuario</span>
             </a>
 
             <a href="{{ route('admin.config.index') }}"
-               class="group flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-indigo-300 hover:shadow-sm transition-all">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 group-hover:bg-indigo-200 transition-colors">
-                <i class="bx bx-cog text-xl text-indigo-600"></i>
+               class="group flex flex-col items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm transition-all">
+              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-800 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-700 transition-colors">
+                <i class="bx bx-cog text-xl text-indigo-600 dark:text-indigo-300"></i>
               </div>
-              <span class="mt-2 text-sm font-medium text-gray-900 text-center">Configuración</span>
+              <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white text-center">Configuración</span>
             </a>
           @endrole
         </div>

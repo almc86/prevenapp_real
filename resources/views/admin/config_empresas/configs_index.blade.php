@@ -30,11 +30,11 @@
   {{-- Header --}}
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
         <i class="bx bx-cog mr-2"></i>
         Configuraciones
       </h2>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Gestiona las configuraciones de <strong>{{ $empresa->nombre_empresa }}</strong>
       </p>
     </div>
@@ -47,9 +47,9 @@
   </div>
 
   {{-- Crear nueva configuración --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
     <div class="px-6 py-6">
-      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-plus-circle mr-2"></i>
         Nueva Configuración
       </h3>
@@ -81,32 +81,32 @@
   </div>
 
   {{-- Lista de configuraciones existentes --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
     <div class="px-6 py-6">
-      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-list-ul mr-2"></i>
         Configuraciones Existentes ({{ $configs->count() }})
       </h3>
 
       @forelse($configs as $config)
-        <div class="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-sm transition-shadow">
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 hover:shadow-sm transition-shadow">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
-                  <i class="bx bx-cog text-primary-600"></i>
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800">
+                  <i class="bx bx-cog text-primary-600 dark:text-primary-300"></i>
                 </div>
                 <div class="ml-3">
-                  <h4 class="text-lg font-medium text-gray-900">{{ $config->nombre }}</h4>
+                  <h4 class="text-lg font-medium text-gray-900 dark:text-white">{{ $config->nombre }}</h4>
                   @if($config->descripcion)
-                    <p class="text-sm text-gray-500">{{ $config->descripcion }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $config->descripcion }}</p>
                   @endif
-                  <div class="flex items-center space-x-4 text-xs text-gray-400 mt-1">
+                  <div class="flex items-center space-x-4 text-xs text-gray-400 dark:text-gray-500 mt-1">
                     <span>Creado: {{ $config->created_at->format('d/m/Y H:i') }}</span>
                     @if($config->created_by)
                       <span>Por: {{ $config->creator->name ?? 'Usuario eliminado' }}</span>
                     @endif
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $config->estado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $config->estado ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
                       {{ $config->estado ? 'Activa' : 'Inactiva' }}
                     </span>
                   </div>
@@ -123,7 +123,7 @@
           </div>
         </div>
       @empty
-        <div class="text-center py-8 text-gray-500">
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
           <i class="bx bx-cog text-4xl mb-2"></i>
           <div>No hay configuraciones creadas</div>
           <div class="text-sm">Crea tu primera configuración usando el formulario de arriba</div>

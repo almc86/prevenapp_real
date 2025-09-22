@@ -7,8 +7,8 @@
   {{-- Header --}}
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
-      <h1 class="text-2xl font-bold leading-tight text-gray-900">Feriados</h1>
-      <p class="mt-1 text-sm text-gray-500">
+      <h1 class="text-2xl font-bold leading-tight text-gray-900 dark:text-white">Feriados</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Calendario de feriados organizados por año para validaciones del sistema.
       </p>
     </div>
@@ -23,21 +23,21 @@
   {{-- Acordeones por año --}}
   <div class="space-y-4" id="accordionFeriados">
     @foreach ($feriados->groupBy(fn($f) => \Carbon\Carbon::parse($f->fecha_feriado_date)->year) as $anio => $feriadosAnio)
-      <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+      <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
         {{-- Header del acordeón --}}
         <button type="button"
-                class="accordion-toggle w-full px-6 py-4 text-left font-medium text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset flex items-center justify-between transition-colors"
+                class="accordion-toggle w-full px-6 py-4 text-left font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset flex items-center justify-between transition-colors"
                 data-target="collapse-{{ $anio }}">
           <span class="text-lg font-semibold">{{ $anio }}</span>
-          <i class="bx bx-chevron-down text-xl text-gray-500 transition-transform duration-200 rotate-icon"></i>
+          <i class="bx bx-chevron-down text-xl text-gray-500 dark:text-gray-400 transition-transform duration-200 rotate-icon"></i>
         </button>
 
         {{-- Contenido del acordeón --}}
         <div id="collapse-{{ $anio }}" class="accordion-content hidden">
-          <div class="p-6 border-t border-gray-200 bg-gray-50">
+          <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               @for ($mes = 1; $mes <= 12; $mes++)
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                   <div class="bg-primary-600 text-white text-center py-2 font-semibold">
                     {{ \Carbon\Carbon::create()->month($mes)->locale('es')->isoFormat('MMMM') }}
                   </div>
@@ -46,13 +46,13 @@
                            data-anio="{{ $anio }}" data-mes="{{ $mes }}">
                       <thead>
                         <tr>
-                          <th class="p-1 text-xs font-medium text-gray-500">Do</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Lu</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Ma</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Mi</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Ju</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Vi</th>
-                          <th class="p-1 text-xs font-medium text-gray-500">Sa</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Do</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Lu</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Ma</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Mi</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Ju</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Vi</th>
+                          <th class="p-1 text-xs font-medium text-gray-500 dark:text-gray-400">Sa</th>
                         </tr>
                       </thead>
                       <tbody><!-- JS genera los días --></tbody>
@@ -123,12 +123,12 @@
       const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const td = document.createElement("td");
       td.textContent = d;
-      td.className = "p-1 h-8 hover:bg-gray-100 cursor-pointer transition-colors";
+      td.className = "p-1 h-8 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors text-gray-900 dark:text-white";
 
       const desc = feriados.get(dateStr);
       if (desc) {
-        td.classList.remove("hover:bg-gray-100");
-        td.classList.add("feriado", "bg-red-100", "text-red-800", "font-semibold", "rounded");
+        td.classList.remove("hover:bg-gray-100", "dark:hover:bg-gray-600");
+        td.classList.add("feriado", "bg-red-100", "dark:bg-orange-500", "text-red-800", "dark:text-black", "font-semibold", "rounded", "border", "border-red-300", "dark:border-orange-400");
         td.title = desc;
       }
 

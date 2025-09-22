@@ -7,10 +7,10 @@
   {{-- Header --}}
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
         Crear Nueva Empresa
       </h2>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         Completa la información básica de la empresa para agregarla al sistema.
       </p>
     </div>
@@ -38,13 +38,13 @@
   @endif
 
   {{-- Formulario --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
-    <form method="POST" action="{{ route('admin.empresas.store') }}" id="form-empresa" enctype="multipart/form-data" class="divide-y divide-gray-200">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+    <form method="POST" action="{{ route('admin.empresas.store') }}" id="form-empresa" enctype="multipart/form-data" class="divide-y divide-gray-200 dark:divide-gray-700">
       @csrf
 
       {{-- Información de la empresa --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
           <i class="bx bx-buildings mr-2"></i>
           Información de la Empresa
         </h3>
@@ -76,7 +76,7 @@
 
       {{-- Información del representante --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
           <i class="bx bx-user mr-2"></i>
           Representante Legal
         </h3>
@@ -107,7 +107,7 @@
 
       {{-- Información de contacto --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
           <i class="bx bx-phone mr-2"></i>
           Información de Contacto
         </h3>
@@ -135,7 +135,7 @@
 
       {{-- Información de ubicación --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
           <i class="bx bx-map mr-2"></i>
           Ubicación
         </h3>
@@ -170,7 +170,7 @@
 
       {{-- Logo --}}
       <div class="px-6 py-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-4">
           <i class="bx bx-image mr-2"></i>
           Logotipo (Opcional)
         </h3>
@@ -187,10 +187,10 @@
 
           <div>
             <label class="form-label">Vista Previa</label>
-            <div class="mt-2 flex items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50" id="preview-container">
+            <div class="mt-2 flex items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700" id="preview-container">
               <div class="text-center" id="preview-placeholder">
-                <i class="bx bx-image text-3xl text-gray-400 mb-2"></i>
-                <p class="text-sm text-gray-500">Vista previa del logo</p>
+                <i class="bx bx-image text-3xl text-gray-400 dark:text-gray-500 mb-2"></i>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Vista previa del logo</p>
               </div>
               <img id="logoPreview" src="" alt="Vista previa logo" class="hidden max-h-28 object-contain rounded">
             </div>
@@ -199,7 +199,7 @@
       </div>
 
       {{-- Botones de acción --}}
-      <div class="px-6 py-4 bg-gray-50 flex items-center justify-end space-x-3">
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex items-center justify-end space-x-3">
 
         <a href="{{ route('admin.empresas.index') }}" class="btn btn-secondary">
           Cancelar

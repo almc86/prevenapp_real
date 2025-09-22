@@ -30,11 +30,11 @@
   {{-- Header --}}
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
         <i class="bx bx-cog mr-2"></i>
         {{ $config->nombre }}
       </h2>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
         <strong>{{ $empresa->nombre_empresa }}</strong> - {{ $config->descripcion ?: 'Configura las categorías, documentos e ítems específicos.' }}
       </p>
     </div>
@@ -51,9 +51,9 @@
   </div>
 
   {{-- Agregar categoría --}}
-  <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
     <div class="px-6 py-6">
-      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-plus-circle mr-2"></i>
         Agregar Categoría
       </h3>
@@ -83,16 +83,16 @@
 
   {{-- Listado de categorías ya asociadas --}}
   @forelse($catsSel as $cat)
-    <div class="bg-white shadow-soft rounded-xl overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
       {{-- Header de la categoría --}}
-      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
         <div class="flex items-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
-            <i class="bx bx-category text-primary-600"></i>
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800">
+            <i class="bx bx-category text-primary-600 dark:text-primary-300"></i>
           </div>
           <div class="ml-3">
-            <h3 class="text-lg font-medium text-gray-900">{{ $cat->nombre }}</h3>
-            <p class="text-sm text-gray-500">Gestiona documentos e ítems para esta categoría</p>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $cat->nombre }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Gestiona documentos e ítems para esta categoría</p>
           </div>
         </div>
         <form method="POST" action="{{ route('admin.config-empresas.categoria.destroy', [$empresa, $config, $cat->id]) }}"
@@ -107,8 +107,8 @@
 
       <div class="p-6">
         {{-- Form para agregar documento a esta categoría --}}
-        <div class="bg-gray-50 rounded-lg p-4 mb-6">
-          <h4 class="text-md font-medium text-gray-900 mb-4">
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+          <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">
             <i class="bx bx-file-plus mr-2"></i>
             Agregar Documento
           </h4>
@@ -167,31 +167,31 @@
         @endphp
 
         <div class="space-y-4">
-          <h4 class="text-md font-medium text-gray-900">
+          <h4 class="text-md font-medium text-gray-900 dark:text-white">
             <i class="bx bx-file mr-2"></i>
             Documentos Configurados ({{ $docs_config->count() }})
           </h4>
 
           @forelse($docs_config as $cfg)
-            <div class="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-sm transition-shadow">
+            <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 hover:shadow-sm transition-shadow">
               {{-- Info principal del documento --}}
               <div class="flex items-start justify-between">
                 <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <div class="text-sm font-medium text-gray-900">{{ $cfg->documento->nombre }}</div>
-                    <div class="text-xs text-gray-500">{{ ucfirst(optional($cfg->documento->tipo)->nombre) }}</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $cfg->documento->nombre }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ ucfirst(optional($cfg->documento->tipo)->nombre) }}</div>
                   </div>
                   <div>
-                    <div class="text-xs text-gray-500">Obligatorio</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Obligatorio</div>
                     <div class="text-sm">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $cfg->obligatorio ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' }}">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $cfg->obligatorio ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
                         {{ $cfg->obligatorio ? 'Sí' : 'No' }}
                       </span>
                     </div>
                   </div>
                   <div>
-                    <div class="text-xs text-gray-500">Vencimiento</div>
-                    <div class="text-sm">
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Vencimiento</div>
+                    <div class="text-sm text-gray-900 dark:text-white">
                       @switch($cfg->vencimiento_modo)
                         @case('por_documento') Por documento @break
                         @case('por_meses') {{ $cfg->meses_vencimiento }} meses @break
@@ -200,9 +200,9 @@
                     </div>
                   </div>
                   <div>
-                    <div class="text-xs text-gray-500">Estado</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Estado</div>
                     <div class="text-sm">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $cfg->estado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $cfg->estado ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
                         {{ $cfg->estado ? 'Activo' : 'Inactivo' }}
                       </span>
                     </div>
@@ -212,12 +212,12 @@
 
               {{-- Información adicional --}}
               <div class="mt-3 flex items-center justify-between">
-                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                   <div class="flex items-center">
                     <i class="bx bx-file-blank mr-1"></i>
                     Plantilla:
                     @if($cfg->plantilla_path)
-                      <a href="{{ asset('storage/'.$cfg->plantilla_path) }}" target="_blank" class="text-primary-600 hover:text-primary-800 ml-1">Ver archivo</a>
+                      <a href="{{ asset('storage/'.$cfg->plantilla_path) }}" target="_blank" class="text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 ml-1">Ver archivo</a>
                     @else
                       <span class="ml-1">No disponible</span>
                     @endif
@@ -243,7 +243,7 @@
               </div>
 
               {{-- Agregar ítem rápido --}}
-              <div class="mt-4 pt-4 border-t border-gray-100">
+              <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-600">
                 <form method="POST" action="{{ route('admin.config-empresas.items.store', $cfg) }}" class="flex gap-2">
                   @csrf
                   <div class="flex-1">
@@ -257,15 +257,15 @@
 
               {{-- Items listados --}}
               @if($cfg->items->count())
-                <div class="mt-4 pt-4 border-t border-gray-100">
-                  <div class="text-xs text-gray-500 mb-2">Ítems configurados:</div>
+                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-600">
+                  <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Ítems configurados:</div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     @foreach($cfg->items->sortBy('orden') as $it)
-                      <div class="flex items-center justify-between bg-gray-50 rounded p-2">
-                        <span class="text-sm">
+                      <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded p-2">
+                        <span class="text-sm text-gray-900 dark:text-white">
                           {{ $it->item }}
                           @if($it->obligatorio)
-                            <span class="text-danger font-medium">*</span>
+                            <span class="text-red-600 dark:text-red-400 font-medium">*</span>
                           @endif
                         </span>
                         <form method="POST" action="{{ route('admin.config-empresas.items.destroy', [$cfg, $it]) }}"
@@ -282,7 +282,7 @@
               @endif
             </div>
           @empty
-            <div class="text-center py-8 text-gray-500">
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
               <i class="bx bx-file text-4xl mb-2"></i>
               <div>Sin documentos configurados.</div>
               <div class="text-sm">Usa el formulario de arriba para agregar documentos a esta categoría.</div>
@@ -292,14 +292,14 @@
       </div>
     </div>
   @empty
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+    <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-6 text-center">
       <div class="flex justify-center mb-4">
-        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-          <i class="bx bx-info-circle text-blue-600 text-2xl"></i>
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-800">
+          <i class="bx bx-info-circle text-blue-600 dark:text-blue-300 text-2xl"></i>
         </div>
       </div>
-      <h3 class="text-lg font-medium text-blue-900 mb-2">No hay categorías asociadas</h3>
-      <p class="text-blue-700 text-sm">
+      <h3 class="text-lg font-medium text-blue-900 dark:text-blue-200 mb-2">No hay categorías asociadas</h3>
+      <p class="text-blue-700 dark:text-blue-300 text-sm">
         Usa el formulario de arriba para agregar categorías a esta empresa y comenzar a configurar sus documentos.
       </p>
     </div>
