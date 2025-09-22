@@ -22,7 +22,7 @@
           <label class="form-label">Agregar categoría</label>
           <select name="categoria_id" class="form-select" required>
             <option value="">Seleccione...</option>
-            @foreach($categoriasDisponibles as $cat)
+            @foreach($catsDisp as $cat)
               <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
             @endforeach
           </select>
@@ -35,7 +35,7 @@
   </div>
 
   {{-- Listado de categorías ya asociadas --}}
-  @forelse($categoriasSeleccionadas as $cat)
+  @forelse($catsSel as $cat)
     <div class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
         <strong>{{ $cat->nombre }}</strong>
