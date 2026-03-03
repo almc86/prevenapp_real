@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','Configuración: '.$config->nombre.' - '.$empresa->nombre_empresa)
+@section('title', $titulo.' - '.$config->nombre.' - '.$empresa->nombre_empresa)
 
 @section('content')
 <div class="space-y-6">
@@ -31,74 +31,19 @@
   <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
       <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:truncate sm:text-3xl sm:tracking-tight">
-        <i class="bx bx-cog mr-2"></i>
-        {{ $config->nombre }}
+        <i class="bx {{ $ambito === 'empresa' ? 'bx-buildings' : 'bx-car' }} mr-2"></i>
+        {{ $titulo }}
       </h2>
       <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        <strong>{{ $empresa->nombre_empresa }}</strong> - {{ $config->descripcion ?: 'Configura las categorías, documentos e ítems específicos.' }}
+        <strong>{{ $empresa->nombre_empresa }}</strong> - {{ $config->nombre }}
       </p>
     </div>
     <div class="mt-4 flex md:mt-0 space-x-3">
-      <a href="{{ route('admin.config-empresas.configs.index', $empresa) }}" class="btn btn-secondary">
+      <a href="{{ route('admin.config-empresas.show', [$empresa, $config]) }}" class="btn btn-secondary">
         <i class="bx bx-arrow-back mr-2"></i>
-        Volver a configuraciones
-      </a>
-      <a href="{{ route('admin.config-empresas.index') }}" class="btn btn-outline-secondary">
-        <i class="bx bx-buildings mr-2"></i>
-        Cambiar empresa
+        Volver a configuración
       </a>
     </div>
-  </div>
-
-  {{-- Botones de configuración por ámbito --}}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {{-- Botón Configurar Globales (Empresa) --}}
-    <a href="{{ route('admin.config-empresas.globales', [$empresa, $config]) }}" class="block bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-      <div class="px-6 py-6 flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="flex h-12 w-12 items-center justify-center rounded-lg {{ $countEmpresa > 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900' }}">
-            <i class="bx bx-buildings text-2xl {{ $countEmpresa > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300' }}"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Configurar Globales</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{ $countEmpresa > 0 ? $countEmpresa . ' documento(s) configurado(s)' : 'Sin documentos configurados' }}
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium {{ $countEmpresa > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-            <i class="bx {{ $countEmpresa > 0 ? 'bx-check-circle' : 'bx-x-circle' }} mr-1"></i>
-            {{ $countEmpresa > 0 ? 'Configurado' : 'Pendiente' }}
-          </span>
-          <i class="bx bx-chevron-right text-2xl text-gray-400"></i>
-        </div>
-      </div>
-    </a>
-
-    {{-- Botón Configurar Flota --}}
-    <a href="{{ route('admin.config-empresas.flota', [$empresa, $config]) }}" class="block bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-      <div class="px-6 py-6 flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="flex h-12 w-12 items-center justify-center rounded-lg {{ $countFlota > 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900' }}">
-            <i class="bx bx-car text-2xl {{ $countFlota > 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300' }}"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Configurar Flota</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{ $countFlota > 0 ? $countFlota . ' documento(s) configurado(s)' : 'Sin documentos configurados' }}
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium {{ $countFlota > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-            <i class="bx {{ $countFlota > 0 ? 'bx-check-circle' : 'bx-x-circle' }} mr-1"></i>
-            {{ $countFlota > 0 ? 'Configurado' : 'Pendiente' }}
-          </span>
-          <i class="bx bx-chevron-right text-2xl text-gray-400"></i>
-        </div>
-      </div>
-    </a>
   </div>
 
   {{-- Agregar categoría --}}
@@ -106,29 +51,45 @@
     <div class="px-6 py-6">
       <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-plus-circle mr-2"></i>
-        Agregar Categoría
+        Agregar Categoría de {{ $ambito === 'empresa' ? 'Empresa' : 'Flota' }}
       </h3>
-      <form method="POST" action="{{ route('admin.config-empresas.categoria.store', [$empresa, $config]) }}">
-        @csrf
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-4 items-end">
-          <div class="sm:col-span-3">
-            <label class="form-label">Categoría disponible *</label>
-            <select name="categoria_id" class="form-select" required>
-              <option value="">Seleccione una categoría...</option>
-              @foreach($catsDisp as $cat)
-                <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
-              @endforeach
-            </select>
-            <p class="form-help">Selecciona una categoría para asociar a esta empresa</p>
+      @if($catsDisp->count() > 0)
+        <form method="POST" action="{{ route('admin.config-empresas.categoria.store', [$empresa, $config]) }}">
+          @csrf
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-4 items-end">
+            <div class="sm:col-span-3">
+              <label class="form-label">Categoría disponible *</label>
+              <select name="categoria_id" class="form-select" required>
+                <option value="">Seleccione una categoría...</option>
+                @foreach($catsDisp as $cat)
+                  <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
+                @endforeach
+              </select>
+              <p class="form-help">Solo se muestran categorías de ámbito {{ $ambito === 'empresa' ? 'Empresa' : 'Flota' }}</p>
+            </div>
+            <div class="sm:col-span-1">
+              <button type="submit" class="btn btn-primary w-full">
+                <i class="bx bx-plus mr-2"></i>
+                Añadir
+              </button>
+            </div>
           </div>
-          <div class="sm:col-span-1">
-            <button type="submit" class="btn btn-primary w-full">
-              <i class="bx bx-plus mr-2"></i>
-              Añadir
-            </button>
+        </form>
+      @else
+        <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+          <div class="flex">
+            <i class="bx bx-info-circle text-yellow-400 text-xl mr-3"></i>
+            <div>
+              <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                No hay categorías disponibles de ámbito <strong>{{ $ambito === 'empresa' ? 'Empresa' : 'Flota' }}</strong>.
+              </p>
+              <p class="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                <a href="{{ route('admin.categorias.create') }}" class="underline">Crea una nueva categoría</a> con ámbito "{{ $ambito === 'empresa' ? 'Empresa (Global)' : 'Flota' }}" primero.
+              </p>
+            </div>
           </div>
         </div>
-      </form>
+      @endif
     </div>
   </div>
 
@@ -138,16 +99,16 @@
       {{-- Header de la categoría --}}
       <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
         <div class="flex items-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800">
-            <i class="bx bx-category text-primary-600 dark:text-primary-300"></i>
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg {{ $ambito === 'empresa' ? 'bg-purple-100 dark:bg-purple-800' : 'bg-orange-100 dark:bg-orange-800' }}">
+            <i class="bx {{ $ambito === 'empresa' ? 'bx-buildings' : 'bx-car' }} {{ $ambito === 'empresa' ? 'text-purple-600 dark:text-purple-300' : 'text-orange-600 dark:text-orange-300' }}"></i>
           </div>
           <div class="ml-3">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $cat->nombre }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Gestiona documentos e ítems para esta categoría</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Gestiona documentos de {{ $ambito === 'empresa' ? 'empresa' : 'flota' }} para esta categoría</p>
           </div>
         </div>
         <form method="POST" action="{{ route('admin.config-empresas.categoria.destroy', [$empresa, $config, $cat->id]) }}"
-              onsubmit="return confirm('¿Quitar categoría de la empresa?')">
+              onsubmit="return confirm('¿Quitar categoría de la configuración?')">
           @csrf @method('DELETE')
           <button type="submit" class="btn btn-sm btn-outline-danger">
             <i class="bx bx-trash mr-2"></i>
@@ -163,52 +124,59 @@
             <i class="bx bx-file-plus mr-2"></i>
             Agregar Documento
           </h4>
-          <form method="POST" action="{{ route('admin.config-empresas.documento.store', [$empresa, $config, $cat->id]) }}" enctype="multipart/form-data">
-            @csrf
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-              <div class="lg:col-span-2">
-                <label class="form-label">Documento *</label>
-                <select name="documento_id" class="form-select" required>
-                  <option value="">Seleccione documento...</option>
-                  @foreach($documentos as $doc)
-                    <option value="{{ $doc->id }}">{{ $doc->nombre }} ({{ ucfirst(optional($doc->tipo)->nombre) }})</option>
-                  @endforeach
-                </select>
+          @if($documentos->count() > 0)
+            <form method="POST" action="{{ route('admin.config-empresas.documento.store', [$empresa, $config, $cat->id]) }}" enctype="multipart/form-data">
+              @csrf
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div class="lg:col-span-2">
+                  <label class="form-label">Documento *</label>
+                  <select name="documento_id" class="form-select" required>
+                    <option value="">Seleccione documento...</option>
+                    @foreach($documentos as $doc)
+                      <option value="{{ $doc->id }}">{{ $doc->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Obligatorio</label>
+                  <select name="obligatorio" class="form-select">
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Vencimiento</label>
+                  <select name="vencimiento_modo" class="form-select">
+                    <option value="por_documento">Por documento</option>
+                    <option value="por_meses">Por meses</option>
+                    <option value="sin_vencimiento">Sin vencimiento</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Meses</label>
+                  <input type="number" min="1" max="120" name="meses_vencimiento" class="form-control" placeholder="12">
+                </div>
+                <div>
+                  <label class="form-label">Plantilla</label>
+                  <input type="file" name="plantilla" class="form-control text-sm" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp">
+                </div>
               </div>
-              <div>
-                <label class="form-label">Obligatorio</label>
-                <select name="obligatorio" class="form-select">
-                  <option value="0">No</option>
-                  <option value="1">Sí</option>
-                </select>
+              <div class="mt-4">
+                <button type="submit" class="btn btn-success">
+                  <i class="bx bx-plus mr-2"></i>
+                  Agregar documento
+                </button>
               </div>
-              <div>
-                <label class="form-label">Vencimiento</label>
-                <select name="vencimiento_modo" class="form-select" id="modo-{{ $cat->id }}">
-                  <option value="por_documento">Por documento</option>
-                  <option value="por_meses">Por meses</option>
-                  <option value="sin_vencimiento">Sin vencimiento</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label">Meses</label>
-                <input type="number" min="1" max="120" name="meses_vencimiento" class="form-control" placeholder="12">
-              </div>
-              <div>
-                <label class="form-label">Plantilla</label>
-                <input type="file" name="plantilla" class="form-control text-sm" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp">
-              </div>
+            </form>
+          @else
+            <div class="text-sm text-yellow-600 dark:text-yellow-400">
+              <i class="bx bx-info-circle mr-1"></i>
+              No hay documentos de tipo {{ $ambito }} disponibles. Crea documentos de este tipo primero.
             </div>
-            <div class="mt-4">
-              <button type="submit" class="btn btn-success">
-                <i class="bx bx-plus mr-2"></i>
-                Agregar documento
-              </button>
-            </div>
-          </form>
+          @endif
         </div>
 
-        {{-- Documentos configurados --}}
+        {{-- Documentos configurados en esta categoría --}}
         @php
           $docs_config = \App\Models\ConfiguracionCategoriaDocumento::with(['documento.tipo','items'])
               ->where('configuracion_id',$config->id)
@@ -281,7 +249,6 @@
 
                 {{-- Acciones --}}
                 <div class="flex items-center space-x-2">
-                  {{-- Activar/Desactivar --}}
                   <form method="POST" action="{{ route('admin.config-empresas.documento.destroy', [$empresa, $config, $cat->id, $cfg->id]) }}"
                         onsubmit="return confirm('¿Cambiar estado de este documento?')" class="inline">
                     @csrf @method('DELETE')
@@ -345,13 +312,13 @@
   @empty
     <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-6 text-center">
       <div class="flex justify-center mb-4">
-        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-800">
-          <i class="bx bx-info-circle text-blue-600 dark:text-blue-300 text-2xl"></i>
+        <div class="flex h-16 w-16 items-center justify-center rounded-full {{ $ambito === 'empresa' ? 'bg-purple-100 dark:bg-purple-800' : 'bg-orange-100 dark:bg-orange-800' }}">
+          <i class="bx {{ $ambito === 'empresa' ? 'bx-buildings' : 'bx-car' }} {{ $ambito === 'empresa' ? 'text-purple-600 dark:text-purple-300' : 'text-orange-600 dark:text-orange-300' }} text-2xl"></i>
         </div>
       </div>
-      <h3 class="text-lg font-medium text-blue-900 dark:text-blue-200 mb-2">No hay categorías asociadas</h3>
+      <h3 class="text-lg font-medium text-blue-900 dark:text-blue-200 mb-2">No hay categorías de {{ $ambito === 'empresa' ? 'Empresa' : 'Flota' }} asociadas</h3>
       <p class="text-blue-700 dark:text-blue-300 text-sm">
-        Usa el formulario de arriba para agregar categorías a esta empresa y comenzar a configurar sus documentos.
+        Usa el formulario de arriba para agregar categorías y comenzar a configurar documentos de {{ $ambito === 'empresa' ? 'empresa' : 'flota' }}.
       </p>
     </div>
   @endforelse

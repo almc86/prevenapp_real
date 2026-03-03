@@ -41,7 +41,7 @@
                 Filtros de Búsqueda
             </h3>
         </div>
-        <form method="GET" action="{{ route('admin.categorias.index') }}" class="px-6 py-6">
+        <form method="GET" action="{{ route('admin.categorias.index') }}" class="px-6 py-6" id="filtros-form" onsubmit="return limpiarCamposVacios()">
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="lg:col-span-2">
                     <label class="form-label">Buscar Categoría</label>
@@ -58,14 +58,26 @@
                 </div>
 
                 <div>
+                    <label class="form-label">Ámbito</label>
+                    <select name="ambito" class="form-select">
+                        <option value="">Todos los ámbitos</option>
+                        @foreach(\App\Models\Categoria::AMBITOS as $key => $label)
+                            <option value="{{ $key }}" {{ ($ambito ?? '') === $key ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
                     <label class="form-label">Estado</label>
                     <select name="estado" class="form-select">
                         <option value="">Todos los estados</option>
                         <option value="1" {{ ($estado ?? '') === '1' ? 'selected' : '' }}>
-                            ✅ Activas
+                            Activas
                         </option>
                         <option value="0" {{ ($estado ?? '') === '0' ? 'selected' : '' }}>
-                            ❌ Inactivas
+                            Inactivas
                         </option>
                     </select>
                 </div>
@@ -128,6 +140,12 @@
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             <div class="flex items-center space-x-1">
+                                <i class="bx bx-target-lock"></i>
+                                <span>Ámbito</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
                                 <i class="bx bx-info-circle"></i>
                                 <span>Estado</span>
                             </div>
@@ -153,6 +171,24 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900 dark:text-white">{{ $c->descripcion }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $ambitoColors = [
+                                        'trabajador' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                                        'empresa' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+                                        'flota' => 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+                                    ];
+                                    $ambitoIcons = [
+                                        'trabajador' => 'bx-user',
+                                        'empresa' => 'bx-buildings',
+                                        'flota' => 'bx-car',
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $ambitoColors[$c->ambito ?? 'trabajador'] ?? $ambitoColors['trabajador'] }}">
+                                    <i class="bx {{ $ambitoIcons[$c->ambito ?? 'trabajador'] ?? $ambitoIcons['trabajador'] }} mr-1"></i>
+                                    {{ \App\Models\Categoria::AMBITOS[$c->ambito ?? 'trabajador'] ?? 'Trabajador' }}
+                                </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($c->estado)
@@ -198,7 +234,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center">
                                     <i class="bx bx-category text-4xl text-gray-400 dark:text-gray-500 mb-2"></i>
                                     <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-1">No hay categorías registradas</h3>
@@ -223,4 +259,19 @@
         @endif
     </div>
 </div>
+
+<script>
+function limpiarCamposVacios() {
+    const form = document.getElementById('filtros-form');
+    const inputs = form.querySelectorAll('input, select');
+
+    inputs.forEach(input => {
+        if (input.value === '' || input.value === null) {
+            input.disabled = true;
+        }
+    });
+
+    return true;
+}
+</script>
 @endsection

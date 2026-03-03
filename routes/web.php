@@ -68,12 +68,17 @@ Route::middleware(['auth','role:administrador'])
             // 3) gestionar una configuración específica
             Route::get('{empresa}/configuraciones/{config}', [ConfigEmpresaController::class,'show'])->name('show');
 
+            // 4) configurar documentos por ámbito
+            Route::get('{empresa}/configuraciones/{config}/globales', [ConfigEmpresaController::class,'showGlobales'])->name('globales');
+            Route::get('{empresa}/configuraciones/{config}/flota', [ConfigEmpresaController::class,'showFlota'])->name('flota');
+
             // categorías en config
             Route::post('{empresa}/configuraciones/{config}/categoria', [ConfigEmpresaController::class,'storeCategoria'])->name('categoria.store');
             Route::delete('{empresa}/configuraciones/{config}/categoria/{categoria}', [ConfigEmpresaController::class,'destroyCategoria'])->name('categoria.destroy');
 
             // documentos en categoría dentro de la config
             Route::post('{empresa}/configuraciones/{config}/categoria/{categoria}/documento', [ConfigEmpresaController::class,'storeDocumento'])->name('documento.store');
+            Route::post('{empresa}/configuraciones/{config}/documento-simple', [ConfigEmpresaController::class,'storeDocumentoSimple'])->name('documento.store-simple');
             Route::put('{empresa}/configuraciones/{config}/categoria/{categoria}/documento/{cfgdoc}', [ConfigEmpresaController::class,'updateDocumento'])->name('documento.update');
             Route::delete('{empresa}/configuraciones/{config}/categoria/{categoria}/documento/{cfgdoc}', [ConfigEmpresaController::class,'destroyDocumento'])->name('documento.destroy');
 

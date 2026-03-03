@@ -27,6 +27,17 @@
              value="{{ old('descripcion') }}" placeholder="Breve descripción de la categoría">
     </div>
 
+    <div class="mb-3">
+      <label class="form-label">Ámbito *</label>
+      <select name="ambito" class="form-select" required>
+        <option value="">Seleccione ámbito...</option>
+        @foreach(\App\Models\Categoria::AMBITOS as $key => $label)
+          <option value="{{ $key }}" {{ old('ambito') == $key ? 'selected' : '' }}>{{ $label }}</option>
+        @endforeach
+      </select>
+      <small class="form-text text-muted">Define en qué sección aparecerá esta categoría</small>
+    </div>
+
     <div class="d-flex gap-2">
       <button type="submit" class="btn btn-primary">Guardar</button>
       <a href="{{ route('admin.categorias.index') }}" class="btn btn-secondary">Cancelar</a>
