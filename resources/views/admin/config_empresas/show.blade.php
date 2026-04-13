@@ -101,8 +101,181 @@
     </a>
   </div>
 
-  {{-- Agregar categoría --}}
+  {{-- Selector de modo de trabajadores --}}
   <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+    <div class="px-6 py-5">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+            <i class="bx bx-user-check mr-2 text-primary-600"></i>
+            Modo de documentos de trabajadores
+          </h3>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Define cómo se asignan los documentos requeridos a los trabajadores
+          </p>
+        </div>
+        <form method="POST" action="{{ route('admin.config-empresas.modo-trabajador.update', [$empresa, $config]) }}" class="flex items-center gap-3">
+          @csrf @method('PATCH')
+          <div class="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <button type="submit" name="modo_trabajador" value="por_categoria"
+              class="px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2
+              {{ $config->modo_trabajador === 'por_categoria' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+              <i class="bx bx-category"></i>
+              Por Categoría
+            </button>
+            <button type="submit" name="modo_trabajador" value="por_cargo"
+              class="px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2 border-l border-gray-300 dark:border-gray-600
+              {{ $config->modo_trabajador === 'por_cargo' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+              <i class="bx bx-hard-hat"></i>
+              Por Cargo
+            </button>
+          </div>
+        </form>
+      </div>
+
+      @if($config->modo_trabajador === 'por_categoria')
+        <div class="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg px-3 py-2">
+          <i class="bx bx-info-circle"></i>
+          <span>Todos los trabajadores comparten los mismos documentos requeridos, agrupados por categoría.</span>
+        </div>
+      @else
+        <div class="mt-3 flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 rounded-lg px-3 py-2">
+          <i class="bx bx-info-circle"></i>
+          <span>Cada cargo tiene su propia pila de documentos requeridos. Selecciona un cargo abajo para configurarlo.</span>
+        </div>
+      @endif
+    </div>
+  </div>
+
+  @if($config->modo_trabajador === 'por_cargo')
+    {{-- Lista de cargos para configurar --}}
+    @php
+      $countPorCargo = \App\Models\ConfiguracionCategoriaDocumento::where('configuracion_id', $config->id)
+          ->whereNotNull('cargo_id')
+          ->where('estado', 1)
+          ->select('cargo_id')
+          ->selectRaw('COUNT(*) as total')
+          ->groupBy('cargo_id')
+          ->pluck('total', 'cargo_id');
+      $cargos = \App\Models\Cargo::orderBy('nombre')->get()
+          ->sortBy([fn($a, $b) => ($countPorCargo->get($b->id, 0) <=> $countPorCargo->get($a->id, 0)) ?: strcmp($a->nombre, $b->nombre)])
+          ->values();
+    @endphp
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+          <i class="bx bx-hard-hat mr-2 text-amber-600"></i>
+          Configurar Documentos por Cargo
+        </h3>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Selecciona un cargo para asignar los documentos que requiere</p>
+      </div>
+      <div class="p-6">
+        @if($cargos->isEmpty())
+          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+            <i class="bx bx-hard-hat text-4xl mb-2"></i>
+            <p>No hay cargos registrados. Crea cargos primero en el módulo de cargos.</p>
+          </div>
+        @else
+          {{-- Buscador de cargos --}}
+          <div class="mb-4">
+            <div class="relative">
+              <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></i>
+              <input type="text" id="buscadorCargos" placeholder="Buscar cargo..." class="block w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" autocomplete="off">
+            </div>
+            <p id="cargosCount" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Mostrando {{ $cargos->count() }} cargos</p>
+          </div>
+
+          @php
+            if (!function_exists('getCargoIcon')) {
+              function getCargoIcon($nombre) {
+                $n = mb_strtolower($nombre);
+                $map = [
+                  ['keys' => ['albañil','alarife','obra','construcción','hormigon','excavador','demolición'], 'icon' => 'bx-building-house', 'bg' => '#fef3c7', 'fg' => '#d97706'],
+                  ['keys' => ['electri','eléctri','voltaje','energía'], 'icon' => 'bx-bolt-circle', 'bg' => '#fef9c3', 'fg' => '#ca8a04'],
+                  ['keys' => ['soldad','calderero','metal','fierr','herrer'], 'icon' => 'bxs-flame', 'bg' => '#ffedd5', 'fg' => '#ea580c'],
+                  ['keys' => ['mecánic','mecanico','manten','mantenc','técnic','tecnico','lubricad','gasfiter'], 'icon' => 'bx-wrench', 'bg' => '#dbeafe', 'fg' => '#2563eb'],
+                  ['keys' => ['conduct','chofer','operador','grúa','grua','camion','transporte','tracto','rigger','maquinar'], 'icon' => 'bx-car', 'bg' => '#e0e7ff', 'fg' => '#4f46e5'],
+                  ['keys' => ['administra','secretar','recepcion','oficin','contab','finanz','tesor','adquisic'], 'icon' => 'bx-briefcase', 'bg' => '#f1f5f9', 'fg' => '#475569'],
+                  ['keys' => ['preven','seguridad','guardia','vigilant','bombero','emergenc','rescate','sso','hse'], 'icon' => 'bx-shield-quarter', 'bg' => '#dcfce7', 'fg' => '#16a34a'],
+                  ['keys' => ['enfermer','médic','medico','paramed','salud','kinesio','nutric'], 'icon' => 'bx-plus-medical', 'bg' => '#fee2e2', 'fg' => '#dc2626'],
+                  ['keys' => ['aseo','aseador','limpiez','junior','jardin'], 'icon' => 'bx-spray-can', 'bg' => '#ccfbf1', 'fg' => '#0d9488'],
+                  ['keys' => ['cocin','chef','aliment','casino','garzón','garzon','manipulad'], 'icon' => 'bxs-dish', 'bg' => '#ffe4e6', 'fg' => '#e11d48'],
+                  ['keys' => ['analista','ingenier','consultor','asesor','especialista','profesional','coordinad','planific'], 'icon' => 'bx-line-chart', 'bg' => '#ede9fe', 'fg' => '#7c3aed'],
+                  ['keys' => ['supervis','jefe','gerente','director','encargad','capata','maestr','lider','líder','subgerente'], 'icon' => 'bx-user-check', 'bg' => '#f3e8ff', 'fg' => '#9333ea'],
+                  ['keys' => ['bodeg','almacen','logíst','logist','despach','estibad','carga','pañol'], 'icon' => 'bx-package', 'bg' => '#cffafe', 'fg' => '#0891b2'],
+                  ['keys' => ['pintor','pintura','revestim','estucador'], 'icon' => 'bx-paint-roll', 'bg' => '#fae8ff', 'fg' => '#c026d3'],
+                  ['keys' => ['carpint','muebl','ebanist'], 'icon' => 'bx-cuboid', 'bg' => '#fef3c7', 'fg' => '#b45309'],
+                  ['keys' => ['call center','comunic','telefon','contact'], 'icon' => 'bx-phone-call', 'bg' => '#e0f2fe', 'fg' => '#0284c7'],
+                  ['keys' => ['informátic','informatic','sistema','programad','desarroll','software','soporte','redes'], 'icon' => 'bx-code-alt', 'bg' => '#d1fae5', 'fg' => '#059669'],
+                  ['keys' => ['asistente','auxiliar','ayudante','aprendiz','practicante'], 'icon' => 'bx-user', 'bg' => '#f3f4f6', 'fg' => '#6b7280'],
+                  ['keys' => ['topógraf','topograf','agrimensor','geodesta'], 'icon' => 'bx-target-lock', 'bg' => '#ecfccb', 'fg' => '#65a30d'],
+                  ['keys' => ['visita','apr visita'], 'icon' => 'bx-walk', 'bg' => '#e0f2fe', 'fg' => '#0ea5e9'],
+                  ['keys' => ['estacion','porter','conserje','control acceso'], 'icon' => 'bx-door-open', 'bg' => '#f5f5f4', 'fg' => '#78716c'],
+                  ['keys' => ['anfitrión','anfitrion'], 'icon' => 'bx-home-smile', 'bg' => '#fce7f3', 'fg' => '#db2777'],
+                ];
+                foreach ($map as $m) {
+                  foreach ($m['keys'] as $key) {
+                    if (str_contains($n, $key)) return $m;
+                  }
+                }
+                return ['icon' => 'bx-hard-hat', 'bg' => '#f3f4f6', 'fg' => '#9ca3af'];
+              }
+            }
+          @endphp
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="cargosGrid">
+            @foreach($cargos as $cargo)
+              @php
+                $count = $countPorCargo->get($cargo->id, 0);
+                $ci = getCargoIcon($cargo->nombre);
+              @endphp
+              <a href="{{ route('admin.config-empresas.cargo.show', [$empresa, $config, $cargo]) }}"
+                 class="cargo-card block border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition-all group"
+                 data-nombre="{{ mb_strtolower($cargo->nombre) }}">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg" style="background-color: {{ $count > 0 ? $ci['bg'] : '' }}; {{ $count <= 0 ? 'background-color: rgba(107,114,128,0.1)' : '' }}">
+                      <i class="bx {{ $ci['icon'] }} text-lg" style="color: {{ $count > 0 ? $ci['fg'] : '#9ca3af' }}"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{{ $cargo->nombre }}</p>
+                      <p class="text-xs {{ $count > 0 ? 'text-green-600 dark:text-green-400 font-medium' : 'text-gray-500 dark:text-gray-400' }}">
+                        {{ $count > 0 ? $count . ' documento(s) configurado(s)' : 'Sin configurar' }}
+                      </p>
+                    </div>
+                  </div>
+                  <i class="bx bx-chevron-right text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                </div>
+              </a>
+            @endforeach
+          </div>
+        @endif
+      </div>
+
+      @push('scripts')
+      <script>
+        document.getElementById('buscadorCargos')?.addEventListener('input', function() {
+          const query = this.value.toLowerCase().trim();
+          const cards = document.querySelectorAll('.cargo-card');
+          let visible = 0;
+          cards.forEach(card => {
+            const nombre = card.getAttribute('data-nombre');
+            const match = !query || nombre.includes(query);
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+          });
+          document.getElementById('cargosCount').textContent = visible === cards.length
+            ? `Mostrando ${cards.length} cargos`
+            : `Mostrando ${visible} de ${cards.length} cargos`;
+        });
+      </script>
+      @endpush
+    </div>
+  @endif
+
+  @if($config->modo_trabajador === 'por_categoria')
+  {{-- Agregar categoría --}}
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-visible">
     <div class="px-6 py-6">
       <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-plus-circle mr-2"></i>
@@ -113,12 +286,19 @@
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-4 items-end">
           <div class="sm:col-span-3">
             <label class="form-label">Categoría disponible *</label>
-            <select name="categoria_id" class="form-select" required>
-              <option value="">Seleccione una categoría...</option>
-              @foreach($catsDisp as $cat)
-                <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
-              @endforeach
-            </select>
+            <div class="searchable-select relative" data-name="categoria_id">
+              <input type="hidden" name="categoria_id" required>
+              <div class="form-select flex items-center justify-between cursor-pointer" id="catDropdownToggle">
+                <input type="text" class="bg-transparent border-none outline-none w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" placeholder="Buscar categoría..." autocomplete="off" id="catSearchInput">
+                <i class="bx bx-chevron-down text-gray-400 ml-2 transition-transform" id="catChevron"></i>
+              </div>
+              <ul class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto hidden" id="catDropdownList">
+                @foreach($catsDisp as $cat)
+                  <li class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer" data-value="{{ $cat->id }}">{{ $cat->nombre }}</li>
+                @endforeach
+                <li class="px-4 py-2 text-sm text-gray-400 dark:text-gray-500 hidden" id="catNoResults">Sin resultados</li>
+              </ul>
+            </div>
             <p class="form-help">Selecciona una categoría para asociar a esta empresa</p>
           </div>
           <div class="sm:col-span-1">
@@ -355,5 +535,61 @@
       </p>
     </div>
   @endforelse
+  @endif {{-- fin modo por_categoria --}}
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('catSearchInput');
+  const dropdownList = document.getElementById('catDropdownList');
+  const chevron = document.getElementById('catChevron');
+  const hiddenInput = document.querySelector('.searchable-select input[name="categoria_id"]');
+  const noResults = document.getElementById('catNoResults');
+  const items = dropdownList.querySelectorAll('li[data-value]');
+
+  function openDropdown() {
+    dropdownList.classList.remove('hidden');
+    chevron.classList.add('rotate-180');
+  }
+
+  function closeDropdown() {
+    dropdownList.classList.add('hidden');
+    chevron.classList.remove('rotate-180');
+  }
+
+  searchInput.addEventListener('focus', openDropdown);
+
+  searchInput.addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    let visible = 0;
+    items.forEach(function(item) {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(filter)) {
+        item.classList.remove('hidden');
+        visible++;
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+    noResults.classList.toggle('hidden', visible > 0);
+    openDropdown();
+  });
+
+  items.forEach(function(item) {
+    item.addEventListener('click', function() {
+      hiddenInput.value = this.dataset.value;
+      searchInput.value = this.textContent;
+      closeDropdown();
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.searchable-select')) {
+      closeDropdown();
+    }
+  });
+});
+</script>
+@endpush

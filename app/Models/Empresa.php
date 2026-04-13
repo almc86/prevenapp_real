@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Empresa extends Model
 {
@@ -38,7 +39,19 @@ class Empresa extends Model
 
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->logo_path ? Storage::url($this->logo_path) : null;
+        if (!$this->logo_path) return null;
+
+        // Si existe en local (logos antiguos), usar URL local
+        if (Storage::disk('public')->exists($this->logo_path)) {
+            return Storage::disk('public')->url($this->logo_path);
+        }
+
+        // Logos en S3: generar URL temporal firmada (válida por 60 minutos)
+        try {
+            return Storage::disk('s3')->temporaryUrl($this->logo_path, now()->addMinutes(60));
+        } catch (\Exception $e) {
+            return null;
+        }
     }
     public function setRutEmpresaAttribute($value)
     {

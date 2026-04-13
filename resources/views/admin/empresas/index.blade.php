@@ -38,7 +38,7 @@
               {{-- Logo --}}
               <div class="flex-shrink-0">
                 @if($e->logo_path)
-                  <img src="{{ Storage::url($e->logo_path) }}" alt="Logo"
+                  <img src="{{ $e->logo_url }}" alt="Logo"
                        class="h-12 w-12 rounded-lg object-contain border border-gray-200">
                 @else
                   <div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">

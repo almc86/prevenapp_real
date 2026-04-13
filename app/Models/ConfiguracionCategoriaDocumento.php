@@ -10,6 +10,7 @@ class ConfiguracionCategoriaDocumento extends Model {
         'configuracion_id',
         'categoria_id',
         'documento_id',
+        'cargo_id',
         'obligatorio',
         'vencimiento_modo',
         'meses_vencimiento',
@@ -39,5 +40,9 @@ class ConfiguracionCategoriaDocumento extends Model {
 
     public function items() {
         return $this->hasMany(ConfiguracionCatDocItem::class, 'configuracion_categoria_documento_id');
+    }
+
+    public function cargo() {
+        return $this->belongsTo(Cargo::class);
     }
 }

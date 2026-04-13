@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role; // <-- usa Spatie
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UsuarioCreado;
 
 
 class UserController extends Controller
@@ -137,8 +139,19 @@ class UserController extends Controller
             $user->empresas()->sync($attach);
         }
 
+        // 9) Enviar correo de bienvenida con credenciales
+        try {
+            Mail::to($user->email)->send(
+                new UsuarioCreado($user->name, $user->email, $request->password, $roleName)
+            );
+        } catch (\Exception $e) {
+            // Si falla el correo, no bloquear la creación del usuario
+            return redirect()->route('admin.usuarios.index')
+                ->with('success', 'Usuario creado correctamente (no se pudo enviar el correo de bienvenida)');
+        }
+
         return redirect()->route('admin.usuarios.index')
-            ->with('success', 'Usuario creado correctamente');
+            ->with('success', 'Usuario creado correctamente y correo de bienvenida enviado');
     }
 
     public function edit($id)

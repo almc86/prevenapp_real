@@ -47,7 +47,7 @@
   </div>
 
   {{-- Agregar categoría --}}
-  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-visible">
     <div class="px-6 py-6">
       <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white mb-6">
         <i class="bx bx-plus-circle mr-2"></i>
@@ -59,12 +59,19 @@
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-4 items-end">
             <div class="sm:col-span-3">
               <label class="form-label">Categoría disponible *</label>
-              <select name="categoria_id" class="form-select" required>
-                <option value="">Seleccione una categoría...</option>
-                @foreach($catsDisp as $cat)
-                  <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
-                @endforeach
-              </select>
+              <div class="searchable-select relative" data-name="categoria_id">
+                <input type="hidden" name="categoria_id" required>
+                <div class="form-select flex items-center justify-between cursor-pointer" id="catDropdownToggle">
+                  <input type="text" class="bg-transparent border-none outline-none w-full text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" placeholder="Buscar categoría..." autocomplete="off" id="catSearchInput">
+                  <i class="bx bx-chevron-down text-gray-400 ml-2 transition-transform" id="catChevron"></i>
+                </div>
+                <ul class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto hidden" id="catDropdownList">
+                  @foreach($catsDisp as $cat)
+                    <li class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer" data-value="{{ $cat->id }}">{{ $cat->nombre }}</li>
+                  @endforeach
+                  <li class="px-4 py-2 text-sm text-gray-400 dark:text-gray-500 hidden" id="catNoResults">Sin resultados</li>
+                </ul>
+              </div>
               <p class="form-help">Solo se muestran categorías de ámbito {{ $ambito === 'empresa' ? 'Empresa' : 'Flota' }}</p>
             </div>
             <div class="sm:col-span-1">
@@ -324,3 +331,59 @@
   @endforelse
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('catSearchInput');
+  const dropdownList = document.getElementById('catDropdownList');
+  const chevron = document.getElementById('catChevron');
+  const hiddenInput = document.querySelector('.searchable-select input[name="categoria_id"]');
+  const noResults = document.getElementById('catNoResults');
+  if (!searchInput || !dropdownList) return;
+  const items = dropdownList.querySelectorAll('li[data-value]');
+
+  function openDropdown() {
+    dropdownList.classList.remove('hidden');
+    chevron.classList.add('rotate-180');
+  }
+
+  function closeDropdown() {
+    dropdownList.classList.add('hidden');
+    chevron.classList.remove('rotate-180');
+  }
+
+  searchInput.addEventListener('focus', openDropdown);
+
+  searchInput.addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    let visible = 0;
+    items.forEach(function(item) {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(filter)) {
+        item.classList.remove('hidden');
+        visible++;
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+    noResults.classList.toggle('hidden', visible > 0);
+    openDropdown();
+  });
+
+  items.forEach(function(item) {
+    item.addEventListener('click', function() {
+      hiddenInput.value = this.dataset.value;
+      searchInput.value = this.textContent;
+      closeDropdown();
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.searchable-select')) {
+      closeDropdown();
+    }
+  });
+});
+</script>
+@endpush

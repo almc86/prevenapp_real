@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CargoController;
 use App\Http\Controllers\Admin\MarcaFlotaController;
 use App\Http\Controllers\Admin\FeriadoController;
 use App\Http\Controllers\Admin\ConfigEmpresaController;
+use App\Http\Controllers\Admin\DashboardController;
 
 
 Route::get('/_check', fn() => 'ok')
@@ -24,9 +25,8 @@ Route::get('/', function () {
 });
 
 // Dashboard general
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 // Perfil de usuario autenticado
 Route::middleware('auth')->group(function () {
@@ -71,6 +71,13 @@ Route::middleware(['auth','role:administrador'])
             // 4) configurar documentos por ámbito
             Route::get('{empresa}/configuraciones/{config}/globales', [ConfigEmpresaController::class,'showGlobales'])->name('globales');
             Route::get('{empresa}/configuraciones/{config}/flota', [ConfigEmpresaController::class,'showFlota'])->name('flota');
+
+            // 5) modo trabajador y configurar por cargo
+            Route::patch('{empresa}/configuraciones/{config}/modo-trabajador', [ConfigEmpresaController::class,'updateModoTrabajador'])->name('modo-trabajador.update');
+            Route::get('{empresa}/configuraciones/{config}/cargo/{cargo}', [ConfigEmpresaController::class,'showCargo'])->name('cargo.show');
+            Route::post('{empresa}/configuraciones/{config}/cargo/{cargo}/documento', [ConfigEmpresaController::class,'storeDocumentoCargo'])->name('documento-cargo.store');
+            Route::post('{empresa}/configuraciones/{config}/cargo/{cargo}/categoria', [ConfigEmpresaController::class,'addCategoriaCargo'])->name('cargo-categoria.store');
+            Route::delete('{empresa}/configuraciones/{config}/cargo/{cargo}/categoria/{categoria}', [ConfigEmpresaController::class,'removeCategoriaCargo'])->name('cargo-categoria.destroy');
 
             // categorías en config
             Route::post('{empresa}/configuraciones/{config}/categoria', [ConfigEmpresaController::class,'storeCategoria'])->name('categoria.store');

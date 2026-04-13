@@ -5,8 +5,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Configuracion extends Model {
   protected $table = 'configuraciones';
-  protected $fillable = ['empresa_id','nombre','descripcion','estado','created_by'];
+  protected $fillable = ['empresa_id','nombre','descripcion','estado','created_by','modo_trabajador'];
   protected $casts = ['estado'=>'boolean'];
+
+  const MODOS_TRABAJADOR = ['por_categoria', 'por_cargo'];
   public function empresa(){ return $this->belongsTo(Empresa::class); }
   public function creator(){ return $this->belongsTo(User::class, 'created_by'); }
   public function categorias(){ return $this->hasMany(ConfiguracionCategoria::class); }

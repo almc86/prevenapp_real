@@ -76,10 +76,10 @@ class EmpresaController extends Controller
             'logo'                  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // 3) Subida de logo (corrige nombre de variable)
+        // 3) Subida de logo a S3
         $logoPath = null;
         if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('logos', 'public');
+            $logoPath = $request->file('logo')->store('logos', 's3');
         }
 
         // Tu código + logo_path
@@ -145,20 +145,28 @@ class EmpresaController extends Controller
             'logo'                  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // 3) Reemplazo de logo
-        if ($request->hasFile('logo')) {
-            if ($empresa->logo_path) {
-                Storage::disk('public')->delete($empresa->logo_path);
-            }
-            $empresa->logo_path = $request->file('logo')->store('logos', 'public');
-        }
-
-        // 4) Actualizar resto
-        $empresa->update($request->only([
+        // 3) Preparar datos para actualizar
+        $data = $request->only([
             'rut_empresa','nombre_empresa','rut_representante','nombre_representante',
             'correo_representante','correo_empresa','telefono',
             'region_id','comuna_id','direccion'
-        ]));
+        ]);
+
+        // 4) Reemplazo de logo en S3
+        if ($request->hasFile('logo')) {
+            if ($empresa->logo_path) {
+                // Borrar del disco donde esté (local o S3)
+                if (Storage::disk('public')->exists($empresa->logo_path)) {
+                    Storage::disk('public')->delete($empresa->logo_path);
+                } else {
+                    Storage::disk('s3')->delete($empresa->logo_path);
+                }
+            }
+            $data['logo_path'] = $request->file('logo')->store('logos', 's3');
+        }
+
+        // 5) Actualizar todo junto
+        $empresa->update($data);
 
         return redirect()->route('admin.empresas.index')->with('success','Empresa actualizada');
     }

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Empresa, Categoria, Documento, Configuracion, ConfiguracionCategoria, ConfiguracionCategoriaDocumento, ConfiguracionCatDocItem};
+use App\Models\{Empresa, Categoria, Documento, Configuracion, ConfiguracionCategoria, ConfiguracionCategoriaDocumento, ConfiguracionCatDocItem, Cargo};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ConfigEmpresaController extends Controller
@@ -294,6 +295,143 @@ class ConfigEmpresaController extends Controller
         ->count();
 
     return view('admin.config_empresas.show_ambito', compact('empresa','config','catsSel','catsDisp','documentos','ambito','titulo','countDocumentos'));
+  }
+
+  public function updateModoTrabajador(Request $r, Empresa $empresa, Configuracion $config) {
+    $r->validate([
+      'modo_trabajador' => ['required', Rule::in(Configuracion::MODOS_TRABAJADOR)],
+    ]);
+    $config->update(['modo_trabajador' => $r->modo_trabajador]);
+    return back()->with('success', 'Modo de configuración de trabajadores actualizado');
+  }
+
+  public function showCargo(Empresa $empresa, Configuracion $config, Cargo $cargo) {
+    if ($config->empresa_id !== $empresa->id) {
+        abort(404);
+    }
+
+    // Categorías asignadas a este cargo en esta configuración
+    $catsSel = Categoria::join('cargo_categoria_config as ccc', 'ccc.categoria_id', '=', 'categorias.id')
+              ->where('ccc.configuracion_id', $config->id)
+              ->where('ccc.cargo_id', $cargo->id)
+              ->select('categorias.*')
+              ->orderBy('categorias.nombre')->get();
+
+    // Todas las categorías de trabajador (para el selector de agregar)
+    $catsDisponibles = Categoria::where('ambito', 'trabajador')
+              ->whereNotIn('id', $catsSel->pluck('id'))
+              ->orderBy('nombre')->get();
+
+    // Documentos de tipo trabajador
+    $documentos = Documento::with('tipo')
+        ->where('estado',1)
+        ->whereHas('tipo', function($q) {
+            $q->where('nombre', 'trabajador');
+        })
+        ->orderBy('nombre')->get();
+
+    // Documentos ya configurados para este cargo
+    $docsConfig = ConfiguracionCategoriaDocumento::with(['documento.tipo','categoria','items'])
+        ->where('configuracion_id', $config->id)
+        ->where('cargo_id', $cargo->id)
+        ->orderBy('id','desc')
+        ->get();
+
+    // Todos los cargos para el sidebar
+    $cargos = Cargo::orderBy('nombre')->get();
+
+    // Contar documentos por cargo
+    $countPorCargo = ConfiguracionCategoriaDocumento::where('configuracion_id', $config->id)
+        ->whereNotNull('cargo_id')
+        ->where('estado', 1)
+        ->select('cargo_id')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('cargo_id')
+        ->pluck('total', 'cargo_id');
+
+    return view('admin.config_empresas.show_cargo', compact('empresa','config','cargo','catsSel','catsDisponibles','documentos','docsConfig','cargos','countPorCargo'));
+  }
+
+  public function addCategoriaCargo(Request $r, Empresa $empresa, Configuracion $config, Cargo $cargo) {
+    $r->validate(['categoria_id' => 'required|exists:categorias,id']);
+
+    DB::table('cargo_categoria_config')->insertOrIgnore([
+      'configuracion_id' => $config->id,
+      'cargo_id' => $cargo->id,
+      'categoria_id' => $r->categoria_id,
+      'created_at' => now(),
+      'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'Categoría agregada al cargo.');
+  }
+
+  public function removeCategoriaCargo(Empresa $empresa, Configuracion $config, Cargo $cargo, Categoria $categoria) {
+    DB::table('cargo_categoria_config')
+      ->where('configuracion_id', $config->id)
+      ->where('cargo_id', $cargo->id)
+      ->where('categoria_id', $categoria->id)
+      ->delete();
+
+    return back()->with('success', 'Categoría removida del cargo.');
+  }
+
+  public function storeDocumentoCargo(Request $r, Empresa $empresa, Configuracion $config, Cargo $cargo) {
+    $r->validate([
+      'categoria_id' => 'required|exists:categorias,id',
+      'documento_id' => 'required|exists:documentos,id',
+      'obligatorio'       => 'nullable|boolean',
+      'vencimiento_modo'  => ['required', Rule::in(ConfiguracionCategoriaDocumento::MODOS)],
+      'meses_vencimiento' => 'nullable|integer|min:1|max:120',
+      'plantilla'         => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg,webp|max:8192',
+    ]);
+
+    // Verificar que no exista ya
+    $exists = ConfiguracionCategoriaDocumento::where('configuracion_id', $config->id)
+        ->where('categoria_id', $r->categoria_id)
+        ->where('documento_id', $r->documento_id)
+        ->where('cargo_id', $cargo->id)
+        ->exists();
+
+    if ($exists) {
+      return back()->withErrors(['documento_id'=>'Este documento ya está asignado a este cargo en esta categoría'])->withInput();
+    }
+
+    // Asegurar que la categoría esté asociada
+    ConfiguracionCategoria::firstOrCreate([
+      'configuracion_id' => $config->id,
+      'categoria_id' => $r->categoria_id,
+    ], ['estado' => true]);
+
+    // Asegurar vínculo categoría-cargo
+    DB::table('cargo_categoria_config')->insertOrIgnore([
+      'configuracion_id' => $config->id,
+      'cargo_id' => $cargo->id,
+      'categoria_id' => $r->categoria_id,
+      'created_at' => now(),
+      'updated_at' => now(),
+    ]);
+
+    $path = null;
+    if ($r->hasFile('plantilla')) $path = $r->file('plantilla')->store('plantillas','public');
+
+    if ($r->vencimiento_modo==='por_meses' && empty($r->meses_vencimiento)) {
+      return back()->withErrors(['meses_vencimiento'=>'Indica meses para vencimiento'])->withInput();
+    }
+
+    ConfiguracionCategoriaDocumento::create([
+      'configuracion_id'  => $config->id,
+      'categoria_id'      => $r->categoria_id,
+      'documento_id'      => $r->documento_id,
+      'cargo_id'          => $cargo->id,
+      'obligatorio'       => (bool)$r->obligatorio,
+      'vencimiento_modo'  => $r->vencimiento_modo,
+      'meses_vencimiento' => $r->vencimiento_modo==='por_meses' ? (int)$r->meses_vencimiento : null,
+      'plantilla_path'    => $path,
+      'estado'            => true,
+    ]);
+
+    return back()->with('success','Documento asignado al cargo '.$cargo->nombre);
   }
 
   public function showFlota(Empresa $empresa, Configuracion $config) {
