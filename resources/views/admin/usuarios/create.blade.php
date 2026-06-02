@@ -481,6 +481,10 @@
     'administrador': {
       title: 'Rol: Administrador',
       content: 'Usuario con permisos completos del sistema. Puede gestionar todos los aspectos de la aplicación.'
+    },
+    'control_acceso': {
+      title: 'Rol: Control de Acceso',
+      content: 'Usuario encargado de registrar entradas y salidas de trabajadores y visitas. Si se asigna empresa principal, verá los trabajadores asociados. Sin empresa, podrá registrar manualmente.'
     }
   };
 
@@ -518,6 +522,9 @@
         if (boxContratistas) boxContratistas.classList.remove('hidden');
         if (boxSubcontratistas) boxSubcontratistas.classList.remove('hidden');
         if (boxPrevencionista) boxPrevencionista.classList.remove('hidden');
+      } else if (selected === 'control_acceso' || selected === 'control acceso') {
+        // Empresa principal es opcional para control de acceso
+        if (boxPrincipales) boxPrincipales.classList.remove('hidden');
       }
     }, 150);
   }

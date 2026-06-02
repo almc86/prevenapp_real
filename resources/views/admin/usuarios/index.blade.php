@@ -176,7 +176,7 @@
                                             {{ $user->name }}
                                         </div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            Registrado {{ $user->created_at->diffForHumans() }}
+                                            Registrado {{ $user->created_at ? $user->created_at->diffForHumans() : 'sin fecha' }}
                                         </div>
                                     </div>
                                 </div>

@@ -124,6 +124,16 @@
         </form>
       </div>
 
+      @php
+        // Documentos ya configurados en esta categoría (para excluirlos del select)
+        $docs_config = \App\Models\ConfiguracionCategoriaDocumento::with(['documento.tipo','items'])
+            ->where('configuracion_id',$config->id)
+            ->where('categoria_id',$cat->id)
+            ->orderBy('id','desc')
+            ->get();
+        $usedDocIds = $docs_config->pluck('documento_id')->all();
+      @endphp
+
       <div class="p-6">
         {{-- Form para agregar documento a esta categoría --}}
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
@@ -137,12 +147,14 @@
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
                 <div class="lg:col-span-2">
                   <label class="form-label">Documento *</label>
-                  <select name="documento_id" class="form-select" required>
-                    <option value="">Seleccione documento...</option>
-                    @foreach($documentos as $doc)
-                      <option value="{{ $doc->id }}">{{ $doc->nombre }}</option>
-                    @endforeach
-                  </select>
+                  <x-searchable-select
+                    name="documento_id"
+                    :options="$documentos->map(fn($d) => ['value' => $d->id, 'label' => $d->nombre])"
+                    :exclude="$usedDocIds"
+                    placeholder="Seleccione documento..."
+                    empty-text="Todos los documentos disponibles ya están agregados a esta categoría."
+                    required
+                  />
                 </div>
                 <div>
                   <label class="form-label">Obligatorio</label>
@@ -183,14 +195,7 @@
           @endif
         </div>
 
-        {{-- Documentos configurados en esta categoría --}}
-        @php
-          $docs_config = \App\Models\ConfiguracionCategoriaDocumento::with(['documento.tipo','items'])
-              ->where('configuracion_id',$config->id)
-              ->where('categoria_id',$cat->id)
-              ->orderBy('id','desc')
-              ->get();
-        @endphp
+        {{-- Documentos configurados en esta categoría (la query se hizo arriba) --}}
 
         <div class="space-y-4">
           <h4 class="text-md font-medium text-gray-900 dark:text-white">

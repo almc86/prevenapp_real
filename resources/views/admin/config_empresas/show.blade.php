@@ -314,20 +314,49 @@
 
   {{-- Listado de categorías ya asociadas --}}
   @forelse($catsSel as $cat)
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
-      {{-- Header de la categoría --}}
-      <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800">
+    @php
+      // Documentos ya configurados en esta categoría (para excluirlos del select)
+      $docs_config = \App\Models\ConfiguracionCategoriaDocumento::with(['documento.tipo','items'])
+          ->where('configuracion_id',$config->id)
+          ->where('categoria_id',$cat->id)
+          ->orderBy('id','desc')
+          ->get();
+      $usedDocIds = $docs_config->pluck('documento_id')->all();
+      $docsActivos = $docs_config->where('estado', 1)->count();
+      $docsObligatorios = $docs_config->where('obligatorio', 1)->count();
+    @endphp
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden category-card" data-category-id="{{ $cat->id }}">
+      {{-- Header de la categoría (clickable para expandir/colapsar) --}}
+      <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex items-center justify-between gap-3">
+        <button type="button" class="category-toggle flex items-center flex-1 text-left min-w-0" aria-expanded="false">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-800 flex-shrink-0">
             <i class="bx bx-category text-primary-600 dark:text-primary-300"></i>
           </div>
-          <div class="ml-3">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $cat->nombre }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Gestiona documentos e ítems para esta categoría</p>
+          <div class="ml-3 flex-1 min-w-0">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white truncate">{{ $cat->nombre }}</h3>
+            <div class="flex items-center flex-wrap gap-2 mt-1">
+              <span class="inline-flex items-center text-xs px-2 py-0.5 rounded-full {{ $docs_config->count() > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                <i class="bx bx-file mr-1"></i>
+                {{ $docs_config->count() }} documento(s)
+              </span>
+              @if($docsObligatorios > 0)
+                <span class="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                  <i class="bx bx-error-circle mr-1"></i>
+                  {{ $docsObligatorios }} obligatorio(s)
+                </span>
+              @endif
+              @if($docs_config->count() > 0 && $docsActivos < $docs_config->count())
+                <span class="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  <i class="bx bx-pause-circle mr-1"></i>
+                  {{ $docs_config->count() - $docsActivos }} inactivo(s)
+                </span>
+              @endif
+            </div>
           </div>
-        </div>
+          <i class="bx bx-chevron-down text-2xl text-gray-400 transition-transform duration-200 category-chevron flex-shrink-0 ml-2"></i>
+        </button>
         <form method="POST" action="{{ route('admin.config-empresas.categoria.destroy', [$empresa, $config, $cat->id]) }}"
-              onsubmit="return confirm('¿Quitar categoría de la empresa?')">
+              onsubmit="return confirm('¿Quitar categoría de la empresa?')" class="flex-shrink-0">
           @csrf @method('DELETE')
           <button type="submit" class="btn btn-sm btn-outline-danger">
             <i class="bx bx-trash mr-2"></i>
@@ -336,7 +365,7 @@
         </form>
       </div>
 
-      <div class="p-6">
+      <div class="category-content hidden border-t border-gray-200 dark:border-gray-600 p-6">
         {{-- Form para agregar documento a esta categoría --}}
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
           <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">
@@ -348,12 +377,18 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
               <div class="lg:col-span-2">
                 <label class="form-label">Documento *</label>
-                <select name="documento_id" class="form-select" required>
-                  <option value="">Seleccione documento...</option>
-                  @foreach($documentos as $doc)
-                    <option value="{{ $doc->id }}">{{ $doc->nombre }} ({{ ucfirst(optional($doc->tipo)->nombre) }})</option>
-                  @endforeach
-                </select>
+                <x-searchable-select
+                  name="documento_id"
+                  :options="$documentos->map(fn($d) => [
+                      'value' => $d->id,
+                      'label' => $d->nombre,
+                      'sublabel' => ucfirst(optional($d->tipo)->nombre),
+                  ])"
+                  :exclude="$usedDocIds"
+                  placeholder="Seleccione documento..."
+                  empty-text="Todos los documentos disponibles ya están agregados a esta categoría."
+                  required
+                />
               </div>
               <div>
                 <label class="form-label">Obligatorio</label>
@@ -388,14 +423,7 @@
           </form>
         </div>
 
-        {{-- Documentos configurados --}}
-        @php
-          $docs_config = \App\Models\ConfiguracionCategoriaDocumento::with(['documento.tipo','items'])
-              ->where('configuracion_id',$config->id)
-              ->where('categoria_id',$cat->id)
-              ->orderBy('id','desc')
-              ->get();
-        @endphp
+        {{-- Documentos configurados (la query se hizo arriba como $docs_config) --}}
 
         <div class="space-y-4">
           <h4 class="text-md font-medium text-gray-900 dark:text-white">
@@ -589,6 +617,39 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!e.target.closest('.searchable-select')) {
       closeDropdown();
     }
+  });
+
+  // Toggle colapsable de cards de categorías
+  const storageKey = 'configEmpresas:openCategories:{{ $config->id }}';
+  let openIds = [];
+  try { openIds = JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { openIds = []; }
+
+  function persistOpenIds() {
+    try { localStorage.setItem(storageKey, JSON.stringify(openIds)); } catch (e) {}
+  }
+
+  document.querySelectorAll('.category-card').forEach(function(card) {
+    const id = card.getAttribute('data-category-id');
+    const toggle = card.querySelector('.category-toggle');
+    const content = card.querySelector('.category-content');
+    const chevron = card.querySelector('.category-chevron');
+    if (!toggle || !content) return;
+
+    function setOpen(open) {
+      content.classList.toggle('hidden', !open);
+      chevron?.classList.toggle('rotate-180', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    if (openIds.includes(id)) setOpen(true);
+
+    toggle.addEventListener('click', function() {
+      const willOpen = content.classList.contains('hidden');
+      setOpen(willOpen);
+      openIds = openIds.filter(x => x !== id);
+      if (willOpen) openIds.push(id);
+      persistOpenIds();
+    });
   });
 });
 </script>

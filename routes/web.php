@@ -19,9 +19,11 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::get('/_check', fn() => 'ok')
   ->middleware(['auth','role:administrador']);
 
-// Página de bienvenida
+// Raíz: si está logueado va al dashboard, si no, al login.
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 });
 
 // Dashboard general

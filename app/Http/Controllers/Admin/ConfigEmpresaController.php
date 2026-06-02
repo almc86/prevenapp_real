@@ -337,9 +337,6 @@ class ConfigEmpresaController extends Controller
         ->orderBy('id','desc')
         ->get();
 
-    // Todos los cargos para el sidebar
-    $cargos = Cargo::orderBy('nombre')->get();
-
     // Contar documentos por cargo
     $countPorCargo = ConfiguracionCategoriaDocumento::where('configuracion_id', $config->id)
         ->whereNotNull('cargo_id')
@@ -349,7 +346,22 @@ class ConfigEmpresaController extends Controller
         ->groupBy('cargo_id')
         ->pluck('total', 'cargo_id');
 
-    return view('admin.config_empresas.show_cargo', compact('empresa','config','cargo','catsSel','catsDisponibles','documentos','docsConfig','cargos','countPorCargo'));
+    // Contar categorías asignadas por cargo en esta configuración
+    $catsPorCargo = DB::table('cargo_categoria_config')
+        ->where('configuracion_id', $config->id)
+        ->select('cargo_id')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('cargo_id')
+        ->pluck('total', 'cargo_id');
+
+    // Todos los cargos para el sidebar: primero los configurados, luego el resto
+    $cargos = Cargo::orderBy('nombre')->get()->sortBy([
+        fn($a, $b) => (($catsPorCargo->get($b->id, 0) + $countPorCargo->get($b->id, 0)) > 0 ? 1 : 0)
+                    - (($catsPorCargo->get($a->id, 0) + $countPorCargo->get($a->id, 0)) > 0 ? 1 : 0),
+        fn($a, $b) => strcmp(mb_strtolower($a->nombre), mb_strtolower($b->nombre)),
+    ])->values();
+
+    return view('admin.config_empresas.show_cargo', compact('empresa','config','cargo','catsSel','catsDisponibles','documentos','docsConfig','cargos','countPorCargo','catsPorCargo'));
   }
 
   public function addCategoriaCargo(Request $r, Empresa $empresa, Configuracion $config, Cargo $cargo) {

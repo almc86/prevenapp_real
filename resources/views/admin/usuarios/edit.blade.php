@@ -40,7 +40,7 @@
             {{ $usuario->activo ? 'Activo' : 'Inactivo' }}
           </span>
           <span class="text-xs text-gray-500">
-            Registrado {{ $usuario->created_at->diffForHumans() }}
+            Registrado {{ $usuario->created_at ? $usuario->created_at->diffForHumans() : 'sin fecha' }}
           </span>
         </div>
       </div>
@@ -372,7 +372,7 @@
       <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex items-center justify-between">
         <div class="text-sm text-gray-500 dark:text-gray-400">
           <i class="bx bx-time mr-1"></i>
-          Última modificación: {{ $usuario->updated_at->diffForHumans() }}
+          Última modificación: {{ $usuario->updated_at ? $usuario->updated_at->diffForHumans() : 'sin fecha' }}
         </div>
         <div class="flex items-center space-x-3">
           <a href="{{ route('admin.usuarios.index') }}" class="btn btn-secondary">
@@ -569,6 +569,10 @@
     'administrador': {
       title: 'Rol: Administrador',
       content: 'Usuario con permisos completos del sistema. Puede gestionar todos los aspectos de la aplicación.'
+    },
+    'control_acceso': {
+      title: 'Rol: Control de Acceso',
+      content: 'Usuario encargado de registrar entradas y salidas de trabajadores y visitas. Si se asigna empresa principal, verá los trabajadores asociados. Sin empresa, podrá registrar manualmente.'
     }
   };
 
@@ -606,6 +610,8 @@
         if (boxContratistas) boxContratistas.classList.remove('hidden');
         if (boxSubcontratistas) boxSubcontratistas.classList.remove('hidden');
         if (boxPrevencionista) boxPrevencionista.classList.remove('hidden');
+      } else if (selected === 'control_acceso' || selected === 'control acceso') {
+        if (boxPrincipales) boxPrincipales.classList.remove('hidden');
       }
     }, 150);
   }

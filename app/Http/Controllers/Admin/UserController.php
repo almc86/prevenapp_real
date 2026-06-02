@@ -68,8 +68,8 @@ class UserController extends Controller
 
         // 2) Determinar rol (Spatie) y normalizar clave de comparación
         $role     = Role::findById($request->role_id, 'web');
-        $roleName = $role->name;                  // p.ej.: 'principal', 'contratista', 'sub contratista', 'prevencionista', 'visualizador'
-        $rolKey   = strtolower(str_replace(' ', '', trim($roleName))); // 'sub contratista' -> 'subcontratista'
+        $roleName = $role->name;                  // p.ej.: 'principal', 'contratista', 'sub contratista', 'prevencionista', 'visualizador', 'Control_acceso'
+        $rolKey   = strtolower(str_replace([' ', '_'], '', trim($roleName))); // 'sub contratista' -> 'subcontratista', 'Control_acceso' -> 'controlacceso'
 
         // 3) Validaciones condicionales por rol
         if (in_array($rolKey, ['principal','visualizador'], true)) {
@@ -87,6 +87,14 @@ class UserController extends Controller
                 'empresas_contratistas.*'    => 'exists:empresas,id',
                 'empresas_subcontratistas'   => 'nullable|array',
                 'empresas_subcontratistas.*' => 'exists:empresas,id',
+            ]);
+        }
+
+        // Control de acceso: empresa principal es opcional
+        if ($rolKey === 'controlacceso') {
+            $request->validate([
+                'empresas_principales'       => 'nullable|array',
+                'empresas_principales.*'     => 'exists:empresas,id',
             ]);
         }
 
@@ -134,7 +142,7 @@ class UserController extends Controller
         }
 
         // 8) Sincronizar SOLO si el rol usa asociaciones
-        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista'];
+        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista','controlacceso'];
         if (in_array($rolKey, $rolesConEmpresas, true)) {
             $user->empresas()->sync($attach);
         }
@@ -197,7 +205,7 @@ class UserController extends Controller
         // 2) Determinar rol (Spatie) y normalizar clave
         $role     = Role::findById($request->role_id, 'web');
         $roleName = $role->name;
-        $rolKey   = strtolower(str_replace(' ', '', trim($roleName)));
+        $rolKey   = strtolower(str_replace([' ', '_'], '', trim($roleName)));
 
         // 3) Validaciones condicionales por rol
         if (in_array($rolKey, ['principal','visualizador'], true)) {
@@ -215,6 +223,14 @@ class UserController extends Controller
                 'empresas_contratistas.*'    => 'exists:empresas,id',
                 'empresas_subcontratistas'   => 'nullable|array',
                 'empresas_subcontratistas.*' => 'exists:empresas,id',
+            ]);
+        }
+
+        // Control de acceso: empresa principal es opcional
+        if ($rolKey === 'controlacceso') {
+            $request->validate([
+                'empresas_principales'       => 'nullable|array',
+                'empresas_principales.*'     => 'exists:empresas,id',
             ]);
         }
 
@@ -276,7 +292,7 @@ class UserController extends Controller
         }
 
         // 8) Sincronizar SOLO si el rol usa asociaciones
-        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista'];
+        $rolesConEmpresas = ['principal','visualizador','contratista','subcontratista','prevencionista','controlacceso'];
         if (in_array($rolKey, $rolesConEmpresas, true)) {
             $usuario->empresas()->sync($attach);
         } else {

@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alpine.js: oculta elementos con x-cloak hasta que Alpine procese (evita flash) */
+[x-cloak] { display: none !important; }
+
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;

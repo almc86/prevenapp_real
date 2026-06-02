@@ -190,49 +190,85 @@
   </div>
 
   {{-- Stats adicionales --}}
-  <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {{-- Documentos --}}
     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <i class="bx bx-file text-2xl text-gray-400 dark:text-gray-500"></i>
+          <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-success-100 dark:bg-success-900/40">
+            <i class="bx bx-file text-2xl text-success-600 dark:text-success-300"></i>
           </div>
-          <div class="ml-5 w-0 flex-1">
+          <div class="ml-4 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Documentos</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">1,234</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Documentos activos</dt>
+              <dd class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($stats['documentos_activos']) }}</dd>
+              <dd class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                de {{ number_format($stats['documentos_total']) }} totales · {{ $stats['tipos_doc_total'] }} tipos
+              </dd>
             </dl>
           </div>
         </div>
       </div>
     </div>
 
+    {{-- Empresas --}}
     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <i class="bx bx-buildings text-2xl text-gray-400 dark:text-gray-500"></i>
+          <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40">
+            <i class="bx bx-buildings text-2xl text-blue-600 dark:text-blue-300"></i>
           </div>
-          <div class="ml-5 w-0 flex-1">
+          <div class="ml-4 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Empresas Activas</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">89</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Empresas registradas</dt>
+              <dd class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($stats['empresas_total']) }}</dd>
+              <dd class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                @if($stats['empresas_total'] > 0)
+                  prom. {{ number_format($stats['configs_total'] / max($stats['empresas_total'], 1), 1) }} configs/empresa
+                @else
+                  sin empresas registradas
+                @endif
+              </dd>
             </dl>
           </div>
         </div>
       </div>
     </div>
 
+    {{-- Configuraciones --}}
     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
       <div class="p-5">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <i class="bx bx-user text-2xl text-gray-400 dark:text-gray-500"></i>
+          <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/40">
+            <i class="bx bx-cog text-2xl text-primary-600 dark:text-primary-300"></i>
           </div>
-          <div class="ml-5 w-0 flex-1">
+          <div class="ml-4 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Usuarios Registrados</dt>
-              <dd class="text-lg font-medium text-gray-900 dark:text-white">456</dd>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Configuraciones activas</dt>
+              <dd class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($stats['configs_activas']) }}</dd>
+              <dd class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                de {{ number_format($stats['configs_total']) }} creadas
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- Catálogo maestro --}}
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-soft rounded-xl">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/40">
+            <i class="bx bx-collection text-2xl text-purple-600 dark:text-purple-300"></i>
+          </div>
+          <div class="ml-4 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Catálogo maestro</dt>
+              <dd class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($stats['cargos_total'] + $stats['categorias_total']) }}</dd>
+              <dd class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {{ $stats['cargos_total'] }} cargos · {{ $stats['categorias_total'] }} categorías · {{ $stats['feriados_anio'] }} feriados {{ now()->year }}
+              </dd>
             </dl>
           </div>
         </div>

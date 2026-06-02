@@ -64,15 +64,22 @@
         </div>
         <div class="max-h-96 overflow-y-auto" id="cargosSidebarList">
           @foreach($cargos as $c)
-            @php $count = $countPorCargo->get($c->id, 0); @endphp
+            @php
+              $count = $countPorCargo->get($c->id, 0);
+              $catsCount = $catsPorCargo->get($c->id, 0);
+            @endphp
             <a href="{{ route('admin.config-empresas.cargo.show', [$empresa, $config, $c]) }}"
                class="cargo-sidebar-item flex items-center justify-between px-4 py-3 text-sm border-b border-gray-100 dark:border-gray-700 transition-colors
                {{ $c->id === $cargo->id ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium border-l-4 border-l-primary-600' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
                data-nombre="{{ mb_strtolower($c->nombre) }}">
               <span class="truncate">{{ $c->nombre }}</span>
               @if($count > 0)
-                <span class="flex-shrink-0 ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                <span class="flex-shrink-0 ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" title="Documentos configurados">
                   {{ $count }}
+                </span>
+              @elseif($catsCount > 0)
+                <span class="flex-shrink-0 ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300" title="Categorías asignadas (sin documentos)">
+                  {{ $catsCount }}
                 </span>
               @endif
             </a>
@@ -120,9 +127,9 @@
       @else
         @foreach($catsSel as $cat)
           @php $catDocs = $docsGrouped->get($cat->id, collect()); @endphp
-          <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+          <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl">
             {{-- Header de categoría --}}
-            <div class="px-5 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onclick="toggleCat({{ $cat->id }})">
+            <div class="px-5 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer rounded-t-xl" onclick="toggleCat({{ $cat->id }})">
               <div class="flex items-center gap-3 flex-1 min-w-0">
                 <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg {{ $catDocs->count() > 0 ? 'bg-green-100 dark:bg-green-900/40' : 'bg-gray-100 dark:bg-gray-700' }}">
                   <i class="bx bx-category {{ $catDocs->count() > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400' }}"></i>
@@ -216,19 +223,22 @@
               @endif
 
               {{-- Formulario agregar documento (siempre visible dentro de la categoría) --}}
-              <div class="px-5 py-3 bg-gray-50 dark:bg-gray-700/30 {{ $catDocs->count() > 0 ? 'border-t border-gray-200 dark:border-gray-600' : '' }}">
+              <div class="px-5 py-3 bg-gray-50 dark:bg-gray-700/30 rounded-b-xl {{ $catDocs->count() > 0 ? 'border-t border-gray-200 dark:border-gray-600' : '' }}">
                 <form method="POST" action="{{ route('admin.config-empresas.documento-cargo.store', [$empresa, $config, $cargo]) }}" enctype="multipart/form-data">
                   @csrf
                   <input type="hidden" name="categoria_id" value="{{ $cat->id }}">
                   <div class="flex items-end gap-2 flex-wrap">
                     <div class="flex-1 min-w-[160px]">
                       <label class="form-label text-xs mb-1">Documento</label>
-                      <select name="documento_id" class="form-select form-select-sm" required>
-                        <option value="">Seleccione...</option>
-                        @foreach($documentos as $doc)
-                          <option value="{{ $doc->id }}">{{ $doc->nombre }}</option>
-                        @endforeach
-                      </select>
+                      <x-searchable-select
+                        name="documento_id"
+                        :options="$documentos->map(fn($d) => ['value' => $d->id, 'label' => $d->nombre])"
+                        :exclude="$catDocs->pluck('documento_id')->all()"
+                        placeholder="Seleccione..."
+                        empty-text="Ya agregaste todos los documentos a esta categoría."
+                        size="sm"
+                        required
+                      />
                     </div>
                     <div class="w-24">
                       <label class="form-label text-xs mb-1">Obligatorio</label>
