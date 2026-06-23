@@ -3,9 +3,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Concerns\PerteneceACuenta;
 
 class Empresa extends Model
 {
+    use PerteneceACuenta;
+
     protected $fillable = [
         'rut_empresa',
         'nombre_empresa',

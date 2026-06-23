@@ -3,9 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\PerteneceACuenta;
 
 class Categoria extends Model
 {
+    use PerteneceACuenta;
+
+    protected static function tenantCompartido(): bool
+    {
+        return true;
+    }
+
     protected $table = 'categorias';
 
     protected $fillable = ['nombre','descripcion','ambito','estado'];

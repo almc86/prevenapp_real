@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Pasa a solo_lectura los trials vencidos (Fase 3 onboarding/planes).
+        $schedule->command('suscripciones:procesar-vencimientos')->dailyAt('03:00');
     }
 
     /**

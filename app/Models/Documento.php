@@ -3,9 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\PerteneceACuenta;
 
 class Documento extends Model
 {
+    use PerteneceACuenta;
+
+    protected static function tenantCompartido(): bool
+    {
+        return true;
+    }
+
     protected $table = 'documentos';
 
     protected $fillable = [

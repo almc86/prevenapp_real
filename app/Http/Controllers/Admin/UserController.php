@@ -25,6 +25,10 @@ class UserController extends Controller
 
         $usuarios = User::query()
             ->with('roles')
+            // Aislamiento multi-tenant: un admin de cuenta sólo ve los usuarios de su cuenta.
+            ->when(!auth()->user()->es_super_admin, function ($query) {
+                $query->where('cuenta_id', auth()->user()->cuenta_id);
+            })
             ->when($q, function ($query) use ($q) {
                 $query->where(function ($sub) use ($q) {
                     $sub->where('name', 'like', "%{$q}%")
@@ -116,6 +120,8 @@ class UserController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role_id'  => $request->role_id, // si mantienes esta columna
+            // El nuevo usuario pertenece a la cuenta de quien lo crea (el admin del tenant).
+            'cuenta_id' => auth()->user()->cuenta_id,
             'activo'   => true,
         ]);
 

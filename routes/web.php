@@ -48,6 +48,9 @@ Route::middleware(['auth','role:administrador'])
         Route::get('configuracion', [ConfiguracionController::class, 'index'])
             ->name('config.index');
 
+        Route::get('uso', [App\Http\Controllers\Admin\UsoController::class, 'index'])
+            ->name('uso.index');
+
         Route::resource('cargos', App\Http\Controllers\Admin\CargoController::class)
         ->only(['index','create','store']);
 

@@ -4,10 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\PerteneceACuenta;
 
 class Feriado extends Model
 {
     use HasFactory;
+    use PerteneceACuenta;
+
+    protected static function tenantCompartido(): bool
+    {
+        return true;
+    }
 
     // Nombre de la tabla (si no sigue la convención plural de Laravel)
     protected $table = 'feriados';

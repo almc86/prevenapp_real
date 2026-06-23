@@ -20,6 +20,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Frontend (React app) URL
+    |--------------------------------------------------------------------------
+    |
+    | Base URL of the React/NestJS app. After a successful login, non-admin
+    | users are redirected here (to /auth/callback) to complete the SSO
+    | handoff. Override with FRONTEND_URL in .env for production.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5174'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

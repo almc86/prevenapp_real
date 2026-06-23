@@ -2,8 +2,11 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\PerteneceACuenta;
 
 class Configuracion extends Model {
+  use PerteneceACuenta;
+
   protected $table = 'configuraciones';
   protected $fillable = ['empresa_id','nombre','descripcion','estado','created_by','modo_trabajador'];
   protected $casts = ['estado'=>'boolean'];
