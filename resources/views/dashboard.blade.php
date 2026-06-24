@@ -28,78 +28,78 @@
   {{-- Estadísticas principales --}}
   <div class="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
     {{-- Empresas --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40">
           <i class="bx bx-buildings text-blue-600 dark:text-blue-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Empresas</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Empresas</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalEmpresas) }}</p>
         </div>
       </div>
     </div>
 
     {{-- Documentos --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/40">
           <i class="bx bx-file text-green-600 dark:text-green-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Documentos</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Documentos</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalDocumentos) }}</p>
         </div>
       </div>
     </div>
 
     {{-- Usuarios --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40">
           <i class="bx bx-user text-amber-600 dark:text-amber-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Usuarios</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Usuarios</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalUsuarios) }}</p>
         </div>
       </div>
     </div>
 
     {{-- Configuraciones --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/40">
           <i class="bx bx-cog text-purple-600 dark:text-purple-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Configuraciones</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Configuraciones</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalConfiguraciones) }}</p>
         </div>
       </div>
     </div>
 
     {{-- Categorias --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/40">
           <i class="bx bx-category text-teal-600 dark:text-teal-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Categorías</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Categorías</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalCategorias) }}</p>
         </div>
       </div>
     </div>
 
     {{-- Cargos --}}
-    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/40">
+    <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/40">
           <i class="bx bx-hard-hat text-rose-600 dark:text-rose-400 text-lg"></i>
         </div>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Cargos</p>
+        <div class="min-w-0">
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Cargos</p>
           <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($totalCargos) }}</p>
         </div>
       </div>
