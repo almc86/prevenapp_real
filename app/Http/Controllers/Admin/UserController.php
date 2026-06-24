@@ -23,12 +23,10 @@ class UserController extends Controller
         $perPage  = (int) $request->input('per_page', 15);
         if (!in_array($perPage, [10,15,25,50,100], true)) $perPage = 15;
 
+        // Aislamiento multi-tenant: lo aplica solo el global scope de PerteneceACuenta
+        // (un admin sólo ve usuarios de su cuenta; el super-admin ve todo).
         $usuarios = User::query()
             ->with('roles')
-            // Aislamiento multi-tenant: un admin de cuenta sólo ve los usuarios de su cuenta.
-            ->when(!auth()->user()->es_super_admin, function ($query) {
-                $query->where('cuenta_id', auth()->user()->cuenta_id);
-            })
             ->when($q, function ($query) use ($q) {
                 $query->where(function ($sub) use ($q) {
                     $sub->where('name', 'like', "%{$q}%")

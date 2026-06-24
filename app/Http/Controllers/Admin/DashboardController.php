@@ -10,7 +10,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Stats principales
+        // Stats principales.
+        // Todos estos modelos usan el trait PerteneceACuenta, así que se filtran
+        // solos por la cuenta del usuario logueado (el super-admin ve todo).
         $totalEmpresas = Empresa::count();
         $totalDocumentos = Documento::where('estado', 1)->count();
         $totalUsuarios = User::count();

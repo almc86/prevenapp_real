@@ -26,7 +26,7 @@
   </div>
 
   {{-- Estadísticas principales --}}
-  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+  <div class="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
     {{-- Empresas --}}
     <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5">
       <div class="flex items-center gap-3">

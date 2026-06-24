@@ -10,11 +10,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Concerns\PerteneceACuenta;
 
 
 class User extends Authenticatable
 {
-     use HasRoles, Notifiable, HasFactory;
+     use HasRoles, Notifiable, HasFactory, PerteneceACuenta;
 
     /**
      * The attributes that are mass assignable.

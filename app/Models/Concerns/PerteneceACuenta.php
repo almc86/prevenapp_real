@@ -33,9 +33,19 @@ trait PerteneceACuenta
         });
 
         static::addGlobalScope('cuenta', function (Builder $builder) {
+            // IMPORTANTE: usamos hasUser() (no user()) para evitar recursión cuando
+            // este trait se aplica al propio modelo Authenticatable (User). Al
+            // restaurar la sesión, el guard llama retrieveById() -> arma un query
+            // sobre users -> dispara este scope. Si acá llamáramos auth()->user(),
+            // el guard intentaría resolver de nuevo -> recursión infinita.
+            // hasUser() sólo pregunta si YA está resuelto, sin disparar resolución.
+            if (! auth()->hasUser()) {
+                return; // sin sesión, o sesión resolviéndose → no filtrar
+            }
+
             $u = auth()->user();
-            if (! $u || $u->es_super_admin) {
-                return; // super-admin o sin sesión → ve todo
+            if ($u->es_super_admin) {
+                return; // super-admin → ve todo
             }
 
             $tabla = $builder->getModel()->getTable();
