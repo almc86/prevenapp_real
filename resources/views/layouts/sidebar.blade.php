@@ -71,7 +71,7 @@
         <h3 class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
           Soporte
         </h3>
-        <a href="#" class="nav-link nav-link-inactive">
+        <a href="{{ route('dashboard') }}?tour=1" class="nav-link nav-link-inactive">
           <i class="bx bx-help-circle text-lg mr-3"></i>
           <span>Ayuda</span>
         </a>

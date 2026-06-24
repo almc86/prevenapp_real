@@ -50,6 +50,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'es_super_admin' => 'boolean',
+        'tour_dashboard_visto_at' => 'datetime',
     ];
 
     public function role()

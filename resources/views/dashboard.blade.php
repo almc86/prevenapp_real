@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
   {{-- Header de bienvenida --}}
-  <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl shadow-soft">
+  <div id="tour-welcome" class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl shadow-soft">
     <div class="px-6 py-8 sm:px-8">
       <div class="flex items-center justify-between">
         <div>
@@ -26,7 +26,7 @@
   </div>
 
   {{-- Estadísticas principales --}}
-  <div class="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+  <div id="tour-stats" class="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
     {{-- Empresas --}}
     <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl p-5 min-w-0">
       <div class="flex items-center gap-3 min-w-0">
@@ -143,7 +143,7 @@
     <div class="space-y-6">
       {{-- Accesos rápidos --}}
       @role('administrador')
-      <div class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
+      <div id="tour-quick" class="bg-white dark:bg-gray-800 shadow-soft rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h3 class="text-base font-semibold text-gray-900 dark:text-white flex items-center">
             <i class="bx bx-rocket mr-2 text-gray-400"></i>
@@ -151,25 +151,25 @@
           </h3>
         </div>
         <div class="p-4 grid grid-cols-2 gap-3">
-          <a href="{{ route('admin.empresas.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all">
+          <a id="tour-nueva-empresa" href="{{ route('admin.empresas.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all">
             <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors">
               <i class="bx bx-plus text-blue-600 dark:text-blue-400"></i>
             </div>
             <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Nueva Empresa</span>
           </a>
-          <a href="{{ route('admin.documentos.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-600 hover:shadow-sm transition-all">
+          <a id="tour-nuevo-documento" href="{{ route('admin.documentos.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-600 hover:shadow-sm transition-all">
             <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/40 group-hover:bg-green-200 dark:group-hover:bg-green-800/50 transition-colors">
               <i class="bx bx-file-plus text-green-600 dark:text-green-400"></i>
             </div>
             <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Nuevo Documento</span>
           </a>
-          <a href="{{ route('admin.usuarios.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all">
+          <a id="tour-nuevo-usuario" href="{{ route('admin.usuarios.create') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all">
             <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40 group-hover:bg-amber-200 dark:group-hover:bg-amber-800/50 transition-colors">
               <i class="bx bx-user-plus text-amber-600 dark:text-amber-400"></i>
             </div>
             <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Nuevo Usuario</span>
           </a>
-          <a href="{{ route('admin.config.index') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm transition-all">
+          <a id="tour-config" href="{{ route('admin.config.index') }}" class="group flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm transition-all">
             <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/40 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-colors">
               <i class="bx bx-cog text-purple-600 dark:text-purple-400"></i>
             </div>
@@ -207,4 +207,6 @@
     </div>
   </div>
 </div>
+
+@include('partials.dashboard-tour')
 @endsection
