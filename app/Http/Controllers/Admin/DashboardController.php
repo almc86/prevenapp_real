@@ -53,7 +53,9 @@ class DashboardController extends Controller
             'bg' => '#e0e7ff', 'fg' => '#4f46e5',
         ]);
 
-        $actividad = $empresasRecientes
+        // collect() => colección base: estos items son arrays (no modelos), así que
+        // merge() no debe llamar getKey() sobre ellos como hace la colección Eloquent.
+        $actividad = collect($empresasRecientes)
             ->merge($documentosRecientes)
             ->merge($usuariosRecientes)
             ->merge($configsRecientes)
